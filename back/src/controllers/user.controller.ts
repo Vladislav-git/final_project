@@ -11,7 +11,11 @@ class UsersController {
 
     register = async (req:any, res:any, next:any) => {
 		res.send(await this.service.register(req.body));
-    };
+	};
+	
+	google = async (req:any, res:any, next:any) => {
+		res.send(await this.service.google(req.body));
+	}
 
 }
 export const controller = new UsersController();

@@ -2,8 +2,9 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import Login from '../components/Login'
 import Register from '../components/Register'
-import Profile from '../components/Profile'
-import {useC, useUpdateC} from '../context/Context'
+import {useC} from '../context/Context'
+import TabNavigation from './TabNavigation'
+
 
 const Stack = createStackNavigator();
 
@@ -23,7 +24,7 @@ const MainNavigation = () => {
         <Stack.Navigator>
             <Stack.Screen name='Login' options={options} component={Login}/>
             <Stack.Screen name='Register' options={options} component={Register}/>
-            <Stack.Screen name='Profile' options={options} component={Profile} />
+            <Stack.Screen name='Profile' options={options} component={TabNavigation} />
         </Stack.Navigator>
     )
 }

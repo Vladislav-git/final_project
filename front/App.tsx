@@ -3,9 +3,6 @@ import MainNavigation from './src/navigation/MainNavigation'
 import { NavigationContainer } from "@react-navigation/native";
 import {Provider} from './src/context/Context'
 
-
-
-
 export default function App() {
   return (
     <Provider>
@@ -13,7 +10,6 @@ export default function App() {
         <MainNavigation />
       </NavigationContainer>
     </Provider>
-    
   );
 }
 

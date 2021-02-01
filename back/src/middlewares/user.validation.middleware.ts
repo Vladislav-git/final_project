@@ -4,23 +4,27 @@ let registrationSchema = yup.object().shape({
     firstname: yup.string().min(3).required(),
     secondname: yup.string().min(3).required(),
     password: yup.string().min(5).required(),
-    email: yup.string().email(),
+    email: yup.string().email().required(),
     created_date: yup.string(),
     user_id: yup.string(),
+});
+
+let loginShema = yup.object().shape({
+    password: yup.string().min(5).required(),
+    email: yup.string().email().required(),
 });
 
 const validate = (shema:any) => (req:any, res:any, next:any) => {
     shema.isValid(req.body)
         .then((data:any) => {
             if (data) {
-                console.log(1)
                 next()
             } else {
-                console.log(2)
                 res.send('not valid')
             }
         })
         .catch((err:any) => res.send(err.message))
 }
 
-export default validate(registrationSchema);
+export const registerValidate = validate(registrationSchema)
+export const loginValidate = validate(loginShema)

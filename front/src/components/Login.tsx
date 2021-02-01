@@ -1,16 +1,14 @@
-import React, {useState, useEffect} from 'react';
-import {Text, TouchableOpacity, TextInput, View, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {Text, TouchableOpacity, TextInput, View, StyleSheet, Image} from 'react-native';
 import axios from 'axios';
 import {useC, useUpdateC} from '../context/Context'
 import * as Google from 'expo-google-app-auth';
-const bcrypt = require('react-native-bcrypt');
+import {loginShema} from '../validation/validation'
 
 const initialLoginModel = {
     email: '',
     password: '',
 }
-
-
 
 const Login = ({navigation}:any) => {
 
@@ -22,42 +20,67 @@ const Login = ({navigation}:any) => {
     const handleGoogle = async () => {
         try {
             const result = await Google.logInAsync({
-                // behavior: 'web',
                 androidClientId: '933995381178-e1mo4pk5uks75i9q68e1v32t5bjq4sen.apps.googleusercontent.com',
                 scopes: ['profile', 'email'],
             });
             if (result.type === 'success') {
-                
-                return navigation.navigate('Profile')
+                axios({
+                    method: 'post',
+                    url: 'http://10.0.2.2:8000/google',
+                    data: result.user,
+                })
+                    .then(resp => {
+                        if (resp.data != 'no such user' && resp.data != 'wrong password') {
+                            updateData(resp.data)
+                            return navigation.navigate('Profile')
+                        } else {
+                            setErr(resp.data)
+                            alert(err)
+                        }
+                    })
+                    .catch(error => {
+                        setErr(error)
+                        alert(err)
+                    })
             } else {
-                
-                return { cancelled: true };
+                setErr('err')
+                alert(err)
             }
         } catch (e) {
-            
-            return { error: true };
+            setErr(e)
+            alert(err)
         }
     }
 
-    const handleSubmit = (data:any) => {
-        const validData = {...data}
-        axios({
-            method: 'post',
-            url: 'http://10.0.2.2:8000/login',
-            data: validData,
-        })
-            .then(resp => {
-                // console.log(resp.data)
-                if (resp.data != 'no such user' && resp.data != 'wrong password') {
-                    updateData(resp.data)
-                    return navigation.navigate('Profile')
-                } else {
-                    setErr(resp.data)
-                    alert(err)
-                }
-                
+    const handleSubmit = (shema:any) => {
+        return loginShema.validate(shema)
+            .then(data => {
+                const validData = {...data}
+                axios({
+                    method: 'post',
+                    url: 'http://10.0.2.2:8000/login',
+                    data: validData,
+                })
+                    .then(resp => {
+                        // console.log(resp.data)
+                        if (resp.data != 'no such user' && resp.data != 'wrong password') {
+                            updateData(resp.data)
+                            return navigation.navigate('Profile')
+                        } else {
+                            setErr(resp.data)
+                            alert(err)
+                        }
+                        
+                    })
+                    .catch(error => {
+                        setErr(error.message)
+                        alert(err)
+                    })
             })
-            .catch(err => console.log(err))
+            .catch(error => {
+                setErr(error.message)
+                alert(err)
+            })
     }
 
     return (
@@ -85,10 +108,15 @@ const Login = ({navigation}:any) => {
                     <Text style={styles.ButtonText}>Register</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={{...styles.Button, backgroundColor: darkTheme ? 'orange' :"#327ba8"}}
+                    style={{...styles.GoogleButton, backgroundColor: darkTheme ? 'orange' :"#0e4f0c"}}
                     onPress={async () => handleGoogle()}
                 >
-                    <Text style={styles.ButtonText}>Log in with Google</Text>
+                    <Image
+                    source={require('../../assets/google.png')}
+                    style={{width: '20%', height: "95%", marginRight: '5%', marginTop:"0.5%"}}
+                    resizeMode="stretch"
+                    />
+                    <Text style={styles.GoogleText}>Log in with Google</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -153,7 +181,23 @@ const styles = StyleSheet.create({
         color: 'red',
         marginTop: '10%',
         alignSelf: 'center'
-    }
+    },
+    GoogleButton: {
+        borderRadius: 5,
+        height: "8%",
+        width: '55%',
+        justifyContent: 'center',
+        alignSelf: 'center',
+        marginTop: '10%',
+        flexDirection: 'row'
+    },
+    GoogleText: {
+        fontSize: 14,
+        color: "#fff",
+        fontWeight: "bold",
+        alignSelf: 'center',
+        marginRight: '16%'
+    },
 })
 
 export default Login;

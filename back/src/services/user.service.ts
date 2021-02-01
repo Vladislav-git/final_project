@@ -32,8 +32,17 @@ class UsersService {
 		} else {
 			return 'this email already exists'
 		}
-		
-    }
+	}
+
+	google = async (body:any) => {
+		const user:any = await usermodel.find({email: body.email})
+		if (user[0] === undefined) {
+			return 'no such user'
+		} else {
+			const token = jwt.sign(body.email, 'somesecretkey');
+			return token
+		}
+	}
 
 };
 
