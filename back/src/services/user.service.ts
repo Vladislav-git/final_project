@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-import {usermodel} from '../db_models/user.db_model'
+import mongoose from 'mongoose';
+import {usermodel, postmodel, commentmodel} from '../db_models/user.db_model'
 
 class UsersService {
 
@@ -11,7 +12,7 @@ class UsersService {
 		} else {
 			if (bcrypt.compareSync(body.password, user[0].password) === true) {
 				const token = jwt.sign(body.email, 'somesecretkey');
-				return token
+				return {token, user}
 			} else {
 				return 'wrong password'
 			}
@@ -27,7 +28,13 @@ class UsersService {
 				firstname: body.firstname,
 				secondname: body.secondname,
 				created_date: body.created_date,
-				user_id: body.user_id})
+				profile: {
+					gender: 'choose gender',
+					birth_date: 'choose birth date',
+					city: 'choose city',
+					phone_number: 'choose phone number'
+				}
+			})
 			return 'user created'
 		} else {
 			return 'this email already exists'
@@ -42,6 +49,35 @@ class UsersService {
 			const token = jwt.sign(body.email, 'somesecretkey');
 			return token
 		}
+	}
+
+	addPost = async (body:any) => {
+		console.log(body)
+		const post = await postmodel.create({
+			user_id: mongoose.Types.ObjectId(body.user_id),
+			post_text: body.post_text,
+			post_img: body.post_img,
+			post_video: body.post_video,
+		})
+		return 'ok'
+	}
+
+	addComment = async (body:any) => {
+		console.log(body)
+		await commentmodel.create({
+			user_id: mongoose.Types.ObjectId(body.user_id),
+			post_id: mongoose.Types.ObjectId(body.post_id),
+			comment_text: 'String',
+			comment_img: 'String',
+			comment_video: 'String',
+		})
+		console.log(await postmodel.find())
+		return 'ok1'
+	}
+
+	get = async (body:any) => {
+		const user = await usermodel.find()
+		return user
 	}
 
 };

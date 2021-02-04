@@ -5,8 +5,6 @@ let registrationSchema = yup.object().shape({
     secondname: yup.string().min(3).required(),
     password: yup.string().min(5).required(),
     email: yup.string().email().required(),
-    created_date: yup.string(),
-    user_id: yup.string(),
 });
 
 let loginShema = yup.object().shape({

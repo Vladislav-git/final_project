@@ -17,5 +17,16 @@ class UsersController {
 		res.send(await this.service.google(req.body));
 	}
 
+	addPost = async (req:any, res:any, next:any) => {
+		res.send(await this.service.addPost(req.body));
+	}
+
+	addComment = async (req:any, res:any, next:any) => {
+		res.send(await this.service.addComment(req.body));
+	}
+
+	get = async (req:any, res:any, next:any) => {
+		res.send(await this.service.get(req.body));
+	}
 }
 export const controller = new UsersController();

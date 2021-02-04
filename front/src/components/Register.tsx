@@ -2,7 +2,7 @@ import axios from 'axios';
 import React, {useState} from 'react';
 import {Text, TouchableOpacity, TextInput, View, StyleSheet} from 'react-native';
 import {registrationSchema} from '../validation/validation'
-import {useC, useUpdateC} from '../context/Context'
+import {useC} from '../context/Context'
 
 const bcrypt = require('react-native-bcrypt');
 
@@ -12,8 +12,6 @@ const initialRegistrationModel = {
     email: '',
     password: '',
     created_date: '',
-    user_id: '',
-    profile: []
 }
 
 const Register = ({navigation}:any) => {
@@ -25,13 +23,12 @@ const Register = ({navigation}:any) => {
     const handleSubmit = (schema:object) => {
         return registrationSchema.validate(schema)
             .then(data => {
-                let validData = {...data, user_id: '', created_date: ''}
+                let validData = {...data,
+                    created_date: '',
+                }
                 const cryptedpass = bcrypt.hashSync(validData.password, 10);
-                const userId = bcrypt.hashSync(validData.email, 10)
                 validData.password = cryptedpass;
-                validData.user_id = userId;
                 validData.created_date = (new Date()).toString()
-
                 axios({
                     method: 'post',
                     url: 'http://10.0.2.2:8000/register',
