@@ -12,7 +12,7 @@ class UsersService {
 		} else {
 			if (bcrypt.compareSync(body.password, user[0].password) === true) {
 				const token = jwt.sign(body.email, 'somesecretkey');
-				return {token, user}
+				return {token, user: user[0]}
 			} else {
 				return 'wrong password'
 			}
@@ -29,11 +29,12 @@ class UsersService {
 				secondname: body.secondname,
 				created_date: body.created_date,
 				profile: {
-					gender: 'choose gender',
+					gender: 'male',
 					birth_date: 'choose birth date',
 					city: 'choose city',
 					phone_number: 'choose phone number'
-				}
+				},
+				avatar: ''
 			})
 			return 'user created'
 		} else {
@@ -75,9 +76,24 @@ class UsersService {
 		return 'ok1'
 	}
 
+	addPhoto = async (body:any) => {
+		console.log(body)
+	}
+
 	get = async (body:any) => {
 		const user = await usermodel.find()
 		return user
+	}
+
+	updateProfile = async (body:any) => {
+		return usermodel.updateOne({email: body.email}, {
+			profile: body.profile,
+			firstname: body.firstname,
+			secondname: body.secondname,
+			avatar: body.avatar
+		})
+			.then(result => 'user updated')
+			.catch(err => err)
 	}
 
 };

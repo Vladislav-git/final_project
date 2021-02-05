@@ -27,7 +27,8 @@ const userShema = new Schema ({
     profile: Object,
     friends: Array,
     images: Array,
-    videos: Array 
+    videos: Array,
+    avatar: String
 })
 
 export const usermodel = mongoose.model('users', userShema)

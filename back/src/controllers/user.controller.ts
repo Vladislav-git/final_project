@@ -28,5 +28,13 @@ class UsersController {
 	get = async (req:any, res:any, next:any) => {
 		res.send(await this.service.get(req.body));
 	}
+
+	addPhoto = async (req:any, res:any, next:any) => {
+		res.send(await this.service.addPhoto(req.body));
+	}
+
+	updateProfile = async (req:any, res:any, next:any) => {
+		res.send(await this.service.updateProfile(req.body));
+	}
 }
 export const controller = new UsersController();

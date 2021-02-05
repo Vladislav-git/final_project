@@ -16,7 +16,8 @@ export default router
     .post('/google', loginValidate, controller.google)
     .post('/add-post', controller.addPost)
     .post('/add-comment', controller.addComment)
-    // .post('/add-photo', auth, controller.addPhoto)
+    .post('/add-photo', auth, controller.addPhoto)
+    .put('/update-profile', auth, controller.updateProfile)
 
 
 
