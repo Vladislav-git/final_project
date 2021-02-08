@@ -9,8 +9,9 @@ const router = express.Router();
 export default router
     // .get('/login',)
     // .get('/register',)
-    .get('/', controller.get)
+    // .get('/', controller.get)
     .get('/profile', auth)
+    .get('/get-posts', controller.getPosts)
     .post('/login', loginValidate, controller.login)
     .post('/register', registerValidate, controller.register)
     .post('/google', loginValidate, controller.google)

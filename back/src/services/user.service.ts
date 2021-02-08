@@ -53,18 +53,21 @@ class UsersService {
 	}
 
 	addPost = async (body:any) => {
-		console.log(body)
-		const post = await postmodel.create({
+		const post:any = await postmodel.create({
 			user_id: mongoose.Types.ObjectId(body.user_id),
 			post_text: body.post_text,
 			post_img: body.post_img,
 			post_video: body.post_video,
 		})
-		return 'ok'
+		if (post[0] === undefined) {
+			return 'no posts'
+		} else {
+			return 'post saved'
+		}
+		
 	}
 
 	addComment = async (body:any) => {
-		console.log(body)
 		await commentmodel.create({
 			user_id: mongoose.Types.ObjectId(body.user_id),
 			post_id: mongoose.Types.ObjectId(body.post_id),
@@ -72,17 +75,12 @@ class UsersService {
 			comment_img: 'String',
 			comment_video: 'String',
 		})
-		console.log(await postmodel.find())
-		return 'ok1'
+		return 'comment created'
 	}
 
-	addPhoto = async (body:any) => {
-		console.log(body)
-	}
-
-	get = async (body:any) => {
-		const user = await usermodel.find()
-		return user
+	getPosts = async () => {
+		const posts = await postmodel.find()
+		return posts
 	}
 
 	updateProfile = async (body:any) => {
@@ -93,7 +91,7 @@ class UsersService {
 			avatar: body.avatar
 		})
 			.then(result => 'user updated')
-			.catch(err => err)
+			.catch(err => err.message)
 	}
 
 };

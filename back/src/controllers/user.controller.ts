@@ -25,8 +25,8 @@ class UsersController {
 		res.send(await this.service.addComment(req.body));
 	}
 
-	get = async (req:any, res:any, next:any) => {
-		res.send(await this.service.get(req.body));
+	getPosts = async (req:any, res:any, next:any) => {
+		res.send(await this.service.getPosts());
 	}
 
 	addPhoto = async (req:any, res:any, next:any) => {
