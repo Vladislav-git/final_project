@@ -36,5 +36,9 @@ class UsersController {
 	updateProfile = async (req:any, res:any, next:any) => {
 		res.send(await this.service.updateProfile(req.body));
 	}
+
+	getFriends = async (req:any, res:any, next:any) => {
+		res.send(await this.service.getFriends(req.online));
+	}
 }
 export const controller = new UsersController();

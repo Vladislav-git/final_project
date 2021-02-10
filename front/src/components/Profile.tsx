@@ -438,14 +438,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: 'white',
     },
-    Input: {
-        height: 30,
-        width: '80%',
-        borderColor: 'gray',
-        borderWidth: 1,
-        borderRadius: 5,
-        marginTop: '1.5%'
-    },
+    
     Button: {
         borderRadius: 10,
         height: 40,

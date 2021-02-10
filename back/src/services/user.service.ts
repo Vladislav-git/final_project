@@ -83,6 +83,19 @@ class UsersService {
 		return posts
 	}
 
+	getFriends = async (email:any) => {
+		const user:any = await usermodel.find({email: email})	
+		const friendsIdList = user[0].friends
+		let friends = []
+		for (let i = 0; i < friendsIdList.length; i++) {
+			let friend = await usermodel.findById(mongoose.Types.ObjectId(friendsIdList[i]))
+			friends.push(friend)
+		}
+		console.log(friends)
+		return friends
+		
+	}
+
 	updateProfile = async (body:any) => {
 		return usermodel.updateOne({email: body.email}, {
 			profile: body.profile,
