@@ -40,5 +40,13 @@ class UsersController {
 	getFriends = async (req:any, res:any, next:any) => {
 		res.send(await this.service.getFriends(req.online));
 	}
+
+	getChats = async (req:any, res:any, next:any) => {
+		res.send(await this.service.getChats(req.online));
+	}
+
+	addChat = async (req:any, res:any, next:any) => {
+		res.send(await this.service.addChat(req.body, req.online));
+	}
 }
 export const controller = new UsersController();

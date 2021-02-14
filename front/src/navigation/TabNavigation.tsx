@@ -5,6 +5,7 @@ import Profile from '../components/Profile'
 import News from '../components/News'
 import Messages from '../components/Messages'
 import Friends from '../components/Friends'
+import ChatList from '../components/ChatList'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const Tab = createMaterialBottomTabNavigator();
@@ -28,8 +29,9 @@ const TabNavigation = () => {
                 tabBarIcon: ({ color }) => (<MaterialCommunityIcons name="account-multiple" color={color} size={26} />),
             }}
             />
-            <Tab.Screen name='Messages' component={Messages}options={{
+            <Tab.Screen name='ChatList' component={ChatList}options={{
                 tabBarIcon: ({ color }) => (<MaterialCommunityIcons name="message" color={color} size={26} />),
+                tabBarLabel: 'Messages'
             }}
             />
             <Tab.Screen name='Profile' component={Profile} options={{

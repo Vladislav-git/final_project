@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 import mongoose from 'mongoose';
-import {usermodel, postmodel, commentmodel} from '../db_models/user.db_model'
+import {usermodel, postmodel, commentmodel, chatmodel, messagemodel} from '../db_models/user.db_model'
 
 class UsersService {
 
@@ -34,7 +34,8 @@ class UsersService {
 					city: 'choose city',
 					phone_number: 'choose phone number'
 				},
-				avatar: ''
+				avatar: '',
+				chats: []
 			})
 			return 'user created'
 		} else {
@@ -59,12 +60,7 @@ class UsersService {
 			post_img: body.post_img,
 			post_video: body.post_video,
 		})
-		if (post[0] === undefined) {
-			return 'no posts'
-		} else {
-			return 'post saved'
-		}
-		
+		return 'post saved'
 	}
 
 	addComment = async (body:any) => {
@@ -91,7 +87,6 @@ class UsersService {
 			let friend = await usermodel.findById(mongoose.Types.ObjectId(friendsIdList[i]))
 			friends.push(friend)
 		}
-		console.log(friends)
 		return friends
 		
 	}
@@ -105,6 +100,32 @@ class UsersService {
 		})
 			.then(result => 'user updated')
 			.catch(err => err.message)
+	}
+
+	getChats = async (email:any) => {
+		const user:any = await usermodel.find({email})
+		const chatsIdList = [...user[0].chats]
+		console.log(chatsIdList)
+		let chatUsersInfo = []
+		let chats = []
+		for (let i = 0; i < chatsIdList.length; i++) {
+			let chat:any = await chatmodel.findById(mongoose.Types.ObjectId(chatsIdList[i]))
+			let chatUser:any = await usermodel.findById(mongoose.Types.ObjectId(chat.user_id))
+			chats.push(chat)
+			chatUsersInfo.push(chatUser)
+		}
+		return {chatUsersInfo, chats}
+	}
+
+	addChat = async (body:any, email:any) => {
+		const chatUser:any = await usermodel.find({email: body.body})
+		const newChat:any = await chatmodel.create({
+			user_id: mongoose.Types.ObjectId(chatUser[0]._id)
+		})
+		const user:any = await usermodel.find({email})
+		user[0].chats.push(newChat)
+		await usermodel.updateOne({email}, user[0])
+		return 'new chat created'
 	}
 
 };

@@ -188,12 +188,13 @@ const Profile = ({navigation}:any) => {
                 </View>
                 <View style={styles.AnythingNewBlock}>
                     <TextInput
-                    style={{...styles.Input,
+                    style={{
                     alignSelf: 'center',
                     width: '60%',
                     marginTop: 0,
                     borderWidth: 0,
-                    backgroundColor: '#ebe8e8'
+                    backgroundColor: '#ebe8e8',
+                    borderRadius: 5
                     }}
                     placeholder='  Anything new?'
                     onFocus={() => setPostModalIsVisible(true)}
@@ -205,7 +206,10 @@ const Profile = ({navigation}:any) => {
                         <View key={index} style={styles.Post}>
                             <View key={index} style={{flexDirection: 'row'}}>
                                 <Image
-                                source={{uri : data.user.avatar}}
+                                source={(data.user.avatar !== '')
+                                ? {uri : data.user.avatar}
+                                : require('../../assets/default_user.png')
+                                }
                                 style={styles.UserImage}
                                 />
                                 <Text style={{marginLeft: '3%', marginTop: '4%'}}>
@@ -465,9 +469,9 @@ const styles = StyleSheet.create({
     },
     MainProfileImage: {
         height: '70%',
-        width: '25%',
+        width: '20%',
         marginLeft: '5%',
-        borderRadius: 60,
+        borderRadius: 50,
         marginTop: '3%'
     },
     PreProfile: {

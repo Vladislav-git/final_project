@@ -13,12 +13,14 @@ export default router
     .get('/profile', auth)
     .get('/get-friends', auth, controller.getFriends)
     .get('/get-posts', auth, controller.getPosts)
+    .get('/get-chats', auth, controller.getChats)
     .post('/login', loginValidate, controller.login)
     .post('/register', registerValidate, controller.register)
     .post('/google', loginValidate, controller.google)
     .post('/add-post', auth, controller.addPost)
     .post('/add-comment', controller.addComment)
     .post('/add-photo', auth, controller.addPhoto)
+    .post('/add-chat', auth, controller.addChat)
     .put('/update-profile', auth, controller.updateProfile)
 
 

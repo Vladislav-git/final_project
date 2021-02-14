@@ -28,9 +28,24 @@ const userShema = new Schema ({
     friends: Array,
     images: Array,
     videos: Array,
-    avatar: String
+    avatar: String,
+    chats: [{type: Schema.Types.ObjectId, ref: 'chats'}]
+})
+
+const chatShema = new Schema({
+    user_id: {type: Schema.Types.ObjectId, ref: 'users'},
+})
+
+const messageShema = new Schema({
+    user_id: {type: Schema.Types.ObjectId, ref: 'users'},
+    chat_id: {type: Schema.Types.ObjectId, ref: 'chats'},
+    message_text: String,
+    message_img: String,
+    message_video: String
 })
 
 export const usermodel = mongoose.model('users', userShema)
 export const postmodel = mongoose.model('posts', postShema)
 export const commentmodel = mongoose.model('comments', commentSchema)
+export const chatmodel = mongoose.model('chats', chatShema)
+export const messagemodel = mongoose.model('messages', messageShema)
