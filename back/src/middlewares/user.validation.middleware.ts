@@ -8,7 +8,6 @@ let registrationSchema = yup.object().shape({
 });
 
 let loginShema = yup.object().shape({
-    password: yup.string().min(5).required(),
     email: yup.string().email().required(),
 });
 

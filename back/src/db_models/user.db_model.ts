@@ -41,7 +41,8 @@ const messageShema = new Schema({
     chat_id: {type: Schema.Types.ObjectId, ref: 'chats'},
     message_text: String,
     message_img: String,
-    message_video: String
+    message_video: String,
+    created_date: String
 })
 
 export const usermodel = mongoose.model('users', userShema)

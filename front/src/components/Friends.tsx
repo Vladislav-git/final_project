@@ -24,8 +24,6 @@ const Friends = () => {
                 .catch(err => alert(err))
         })()
     },[])
-    
-    console.log(friends[0],3)
 
     return (
 
@@ -35,8 +33,8 @@ const Friends = () => {
             placeholder='Search'
             style={styles.Input}
             />
-            <Text style={{marginLeft: '5%'}}>My Friends</Text>
-            <ScrollView>
+            <Text style={{marginLeft: '5%', marginTop: '1%', fontSize: 20}}>My Friends</Text>
+            <ScrollView style={{marginTop: '1%'}}>
                 {(friends.length !== 0)
                     ? friends.map((friend:any, index:number) => (
                         <View style={styles.FriendContainer} key={index}>
@@ -49,7 +47,7 @@ const Friends = () => {
                             <Text style={{marginTop: '2%', marginLeft: '2%'}}>{friend.firstname} {friend.secondname}</Text>
                         </View>
                     ))
-                    : <Text>no friends</Text>
+                    : <Text style={{marginLeft: '5%'}}>no friends</Text>
                 }
             </ScrollView>
             

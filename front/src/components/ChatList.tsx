@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {Text, TouchableOpacity, Modal, ScrollView, View, Image, TextInput} from 'react-native'
+import {Text, TouchableOpacity, Modal, ScrollView, View, Image, TextInput, StyleSheet} from 'react-native'
 import axios from 'axios';
 import {useC, useUpdateC} from '../context/Context'
 
@@ -28,37 +28,41 @@ const ChatList = ({navigation}:any) => {
         })()
     }, [])
 
-    const addChat = async () => {
-        axios('http://10.0.2.2:8000/add-chat',{
-            method: 'post',
-            headers: {Authorization: 'Bearer ' + data.token},
-            data: {body:'vlad@mail.ru'}
-        })
-            .then(resp => console.log(resp.data))
-            .catch(err => alert(err.message))
-    }
+    // const addChat = async () => {
+    //     axios('http://10.0.2.2:8000/add-chat',{
+    //         method: 'post',
+    //         headers: {Authorization: 'Bearer ' + data.token},
+    //         data: {body:'vlad@mail.ru'}
+    //     })
+    //         .then(resp => console.log(resp.data))
+    //         .catch(err => alert(err.message))
+    // }
 
     return (
         <ScrollView>
-            <TextInput />
-            <TouchableOpacity onPress={() => addChat()}>
-                <Text>Add chat</Text>
-            </TouchableOpacity>
+            <TextInput
+            placeholder='Search chat'
+            style={styles.Input}
+            />
             {(chatUsersInfo[0] !== undefined)
                 ? chatUsersInfo.map((chat:any, index) => (
-                    <View key={index} style={{width: '100%', height: 70, borderWidth: 1}}>
-                        <TouchableOpacity style={{flexDirection: 'row', height: '100%'}} onPress={() => {
+                    <View key={index} style={styles.ChatListBox}>
+                        <TouchableOpacity
+                        style={styles.ChatBox}
+                        activeOpacity={1}
+                        onPress={() => {
                             updateData({...data}, chat)
                             navigation.navigate('Messages')
-                        }}>
+                        }}
+                        >
                             <Image
                             source={(chat.avatar !== '')
                                 ? {uri: chat.avatar}
                                 : require('../../assets/default_user.png')
                             }
-                            style={{width: '15%', height: '90%', borderRadius: 10}}
+                            style={styles.Image}
                             />
-                            <Text style={{alignSelf: 'center', borderWidth: 1}}>{chat.firstname} {chat.secondname}</Text>
+                            <Text style={styles.Text}>{chat.firstname} {chat.secondname}</Text>
                         </TouchableOpacity>
                     </View>
                 ))
@@ -71,5 +75,39 @@ const ChatList = ({navigation}:any) => {
     )
     
 }
+
+const styles = StyleSheet.create({
+    ChatListBox: {
+        width: '100%',
+        height: 70,
+        marginTop: '3%'
+        // borderWidth: 1
+    },
+    ChatBox: {
+        flexDirection: 'row',
+        height: '100%'
+    },
+    Image: {
+        width: '15%',
+        height: '90%',
+        borderRadius: 10,
+        marginLeft: '2%'
+    },
+    Text: {
+        alignSelf: 'flex-start',
+        fontSize: 16,
+        // borderWidth: 1,
+        marginLeft: '2%',
+        marginTop: '1%'
+    },
+    Input: {
+        marginTop: '2%',
+        height: '35%',
+        width: '80%',
+        marginLeft: '10%',
+        borderWidth: 1,
+        borderRadius: 5
+    }
+})
 
 export default ChatList;

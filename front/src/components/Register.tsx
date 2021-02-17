@@ -73,6 +73,7 @@ const Register = ({navigation}:any) => {
                 <TextInput
                 style={styles.Input} 
                 value={registrationModel.password}
+                secureTextEntry
                 onChangeText={(password) => setRegistrationModel({...registrationModel, password: password})}
                 />
                 <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? 'orange' :"#327ba8"}} onPress={() => handleSubmit(registrationModel)}>

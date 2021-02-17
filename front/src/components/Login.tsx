@@ -19,7 +19,7 @@ const Login = ({navigation}:any) => {
 
     const handleGoogle = async () => {
         try {
-            const result = await Google.logInAsync({
+            const result:any = await Google.logInAsync({
                 androidClientId: '933995381178-e1mo4pk5uks75i9q68e1v32t5bjq4sen.apps.googleusercontent.com',
                 scopes: ['profile', 'email'],
             });
@@ -30,7 +30,7 @@ const Login = ({navigation}:any) => {
                     data: result.user,
                 })
                     .then(resp => {
-                        if (resp.data != 'no such user' && resp.data != 'wrong password') {
+                        if (resp.data != 'no such user') {
                             updateData(resp.data)
                             return navigation.navigate('Profile')
                         } else {
@@ -52,6 +52,7 @@ const Login = ({navigation}:any) => {
         }
     }
 
+
     const handleSubmit = (shema:any) => {
         return loginShema.validate(shema)
             .then(data => {
@@ -62,7 +63,6 @@ const Login = ({navigation}:any) => {
                     data: validData,
                 })
                     .then(resp => {
-                        // console.log(resp.data)
                         if (resp.data != 'no such user' && resp.data != 'wrong password') {
                             updateData(resp.data)
                             return navigation.navigate('Profile')
@@ -99,6 +99,7 @@ const Login = ({navigation}:any) => {
                 style={styles.Input}
                 placeholderTextColor='grey'
                 value={loginModel.password}
+                secureTextEntry
                 onChangeText={(password) => setLoginModel({...loginModel, password: password})}
                 />
                 <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? 'orange' :"#327ba8"}} onPress={() => handleSubmit(loginModel)}>
@@ -113,7 +114,7 @@ const Login = ({navigation}:any) => {
                 >
                     <Image
                     source={require('../../assets/google.png')}
-                    style={{width: '20%', height: "95%", marginRight: '5%', marginTop:"0.5%"}}
+                    style={{width: '20%', height: "90%", marginRight: '3%', marginLeft: '5%', marginTop:"1%", borderRadius: 50}}
                     resizeMode="stretch"
                     />
                     <Text style={styles.GoogleText}>Log in with Google</Text>

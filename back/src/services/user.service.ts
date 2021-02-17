@@ -49,7 +49,7 @@ class UsersService {
 			return 'no such user'
 		} else {
 			const token = jwt.sign(body.email, 'somesecretkey');
-			return token
+			return {token, user: user[0]}
 		}
 	}
 
@@ -105,7 +105,6 @@ class UsersService {
 	getChats = async (email:any) => {
 		const user:any = await usermodel.find({email})
 		const chatsIdList = [...user[0].chats]
-		console.log(chatsIdList)
 		let chatUsersInfo = []
 		let chats = []
 		for (let i = 0; i < chatsIdList.length; i++) {
