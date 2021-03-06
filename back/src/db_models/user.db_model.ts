@@ -33,7 +33,8 @@ const userShema = new Schema ({
 })
 
 const chatShema = new Schema({
-    user_id: {type: Schema.Types.ObjectId, ref: 'users'},
+    chat_user_id: {type: Schema.Types.ObjectId, ref: 'users'},
+    current_user_id: {type: Schema.Types.ObjectId, ref: 'users'}
 })
 
 const messageShema = new Schema({

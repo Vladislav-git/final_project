@@ -28,18 +28,23 @@ const ChatList = ({navigation}:any) => {
         })()
     }, [])
 
-    // const addChat = async () => {
-    //     axios('http://10.0.2.2:8000/add-chat',{
-    //         method: 'post',
-    //         headers: {Authorization: 'Bearer ' + data.token},
-    //         data: {body:'vlad@mail.ru'}
-    //     })
-    //         .then(resp => console.log(resp.data))
-    //         .catch(err => alert(err.message))
-    // }
+    const addChat = async () => {
+        axios('http://10.0.2.2:8000/add-chat',{
+            method: 'post',
+            headers: {Authorization: 'Bearer ' + data.token},
+            data: {chat_user:'vlad@mail.ru'}
+        })
+            .then(resp => console.log(resp.data))
+            .catch(err => alert(err.message))
+    }
+
+    console.log(chatUsersInfo)
 
     return (
         <ScrollView>
+            <TouchableOpacity style={styles.Button} onPress={() => addChat()}>
+                <Text>Add chat</Text>
+            </TouchableOpacity>
             <TextInput
             placeholder='Search chat'
             style={styles.Input}
@@ -56,7 +61,7 @@ const ChatList = ({navigation}:any) => {
                         }}
                         >
                             <Image
-                            source={(chat.avatar !== '')
+                            source={(chat.avatar !== null && chat.avatar !== '')
                                 ? {uri: chat.avatar}
                                 : require('../../assets/default_user.png')
                             }
@@ -107,6 +112,13 @@ const styles = StyleSheet.create({
         marginLeft: '10%',
         borderWidth: 1,
         borderRadius: 5
+    },
+    Button: {
+        marginTop: '2%',
+        height: '30%',
+        width: '20%',
+        backgroundColor: 'green',
+        alignSelf: 'center'
     }
 })
 

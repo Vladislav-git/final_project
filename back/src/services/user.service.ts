@@ -107,23 +107,32 @@ class UsersService {
 		const chatsIdList = [...user[0].chats]
 		let chatUsersInfo = []
 		let chats = []
+		let chatUser:any = []
 		for (let i = 0; i < chatsIdList.length; i++) {
 			let chat:any = await chatmodel.findById(mongoose.Types.ObjectId(chatsIdList[i]))
-			let chatUser:any = await usermodel.findById(mongoose.Types.ObjectId(chat.user_id))
+			if (user[0]._id.toString() === chat.current_user_id.toString()) {
+				chatUser = await usermodel.findById(mongoose.Types.ObjectId(chat.chat_user_id))
+			} else {
+				chatUser = await usermodel.findById(mongoose.Types.ObjectId(chat.current_user_id))
+			}
 			chats.push(chat)
 			chatUsersInfo.push(chatUser)
 		}
 		return {chatUsersInfo, chats}
 	}
 
-	addChat = async (body:any, email:any) => {
-		const chatUser:any = await usermodel.find({email: body.body})
+	addChat = async (body:any, current_user:any) => {
+		const chatUser:any = await usermodel.find({email: body.chat_user})
+		const currentUser:any = await usermodel.find({email: current_user})
 		const newChat:any = await chatmodel.create({
-			user_id: mongoose.Types.ObjectId(chatUser[0]._id)
+			chat_user_id: mongoose.Types.ObjectId(chatUser[0]._id),
+			current_user_id: mongoose.Types.ObjectId(currentUser[0]._id)
 		})
-		const user:any = await usermodel.find({email})
-		user[0].chats.push(newChat)
-		await usermodel.updateOne({email}, user[0])
+		
+		chatUser[0].chats.push(newChat)
+		currentUser[0].chats.push(newChat)
+		await usermodel.updateOne({email: current_user}, currentUser[0])
+		await usermodel.updateOne({email: body.chat_user}, chatUser[0])
 		return 'new chat created'
 	}
 

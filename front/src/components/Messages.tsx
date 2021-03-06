@@ -23,7 +23,7 @@ const Messages = () => {
         })()
     },[])
 
-    const socket = io('http://192.168.56.1:8000')
+    const socket = io('http://192.168.31.181:8000')
 
     const sendMessage = () => {
         socket.emit('msg', {message, current_chat: data.current_chat, id: data.user._id})
