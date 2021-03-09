@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
-import {Text, TouchableOpacity, TextInput, View, StyleSheet, Image} from 'react-native';
+import React, {useState, useRef} from 'react';
+import {Text, TouchableOpacity, TextInput, View, StyleSheet, Image, Modal, Dimensions} from 'react-native';
+import {FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
 import axios from 'axios';
 import {useC, useUpdateC} from '../context/Context'
 import * as Google from 'expo-google-app-auth';
 import {loginShema} from '../validation/validation'
+import firebase from 'firebase'
 
 const initialLoginModel = {
     email: '',
@@ -14,34 +16,47 @@ const Login = ({navigation}:any) => {
 
     const {darkTheme, data}:any = useC();
     const {updateData}:any = useUpdateC();
+
+    const recaptchaVerifier:any = useRef(null);
+
+    const firebaseConfig:any = firebase.apps.length ? firebase.app().options : undefined;
+
     const [loginModel, setLoginModel] = useState(initialLoginModel)
     const [err, setErr] = useState('')
+    const [phoneNumber, setPhoneNumber]:any = useState('');
+    const [verificationId, setVerificationId] = useState('');
+    const [verificationCode, setVerificationCode] = useState('');
+    const [isVisible, setIsVisible] = useState(false)
+    const [result, setResult]:any = useState()
 
     const handleGoogle = async () => {
         try {
             const result:any = await Google.logInAsync({
-                androidClientId: '933995381178-e1mo4pk5uks75i9q68e1v32t5bjq4sen.apps.googleusercontent.com',
+                androidClientId: '7827040613-v22eje7tjjptnnkn8ec1erl9lts7u0q1.apps.googleusercontent.com',
                 scopes: ['profile', 'email'],
             });
             if (result.type === 'success') {
-                axios({
-                    method: 'post',
-                    url: 'http://10.0.2.2:8000/google',
-                    data: result.user,
-                })
-                    .then(resp => {
-                        if (resp.data != 'no such user') {
-                            updateData(resp.data)
-                            return navigation.navigate('Profile')
-                        } else {
-                            setErr(resp.data)
-                            alert(err)
-                        }
-                    })
-                    .catch(error => {
-                        setErr(error)
-                        alert(err)
-                    })
+                setResult(result)
+                setIsVisible(true)
+                
+                // axios({
+                //     method: 'post',
+                //     url: 'http://10.0.2.2:8000/google',
+                //     data: result.user,
+                // })
+                //     .then(resp => {
+                //         if (resp.data != 'no such user') {
+                //             updateData(resp.data)
+                //             return navigation.navigate('Profile')
+                //         } else {
+                //             setErr(resp.data)
+                //             alert(err)
+                //         }
+                //     })
+                //     .catch(error => {
+                //         setErr(error)
+                //         alert(err)
+                //     })
             } else {
                 setErr('err')
                 alert(err)
@@ -120,6 +135,88 @@ const Login = ({navigation}:any) => {
                     <Text style={styles.GoogleText}>Log in with Google</Text>
                 </TouchableOpacity>
             </View>
+            <Modal
+            visible={isVisible}
+            animationType='slide'
+            transparent={true}
+            >
+                <View style={styles.Modal}>
+                    <TextInput
+                    placeholder="+1 999 999 9999"
+                    autoFocus
+                    autoCompleteType="tel"
+                    keyboardType="phone-pad"
+                    textContentType="telephoneNumber"
+                    onChangeText={(number) => setPhoneNumber(number)}
+                    />
+                    <FirebaseRecaptchaVerifierModal
+                    ref={recaptchaVerifier}
+                    firebaseConfig={firebaseConfig}
+                    attemptInvisibleVerification={true}
+                    />
+                    <TouchableOpacity onPress={async() => {
+                        try {
+                            const phoneProvider = new firebase.auth.PhoneAuthProvider();
+                            const verificationId = await phoneProvider.verifyPhoneNumber(
+                                phoneNumber,
+                                recaptchaVerifier.current
+                            );
+                            setVerificationId(verificationId);
+                            alert('Verification code has been sent to your phone.')
+                            
+                        } catch (err) {
+                            alert(`Error: ${err.message}`);
+                        }
+                    }}>
+                        <Text>Send verification code</Text>
+                    </TouchableOpacity>
+                    <TextInput
+                    value={verificationCode}
+                    onChangeText={(code) => setVerificationCode(code)}
+                    />
+                    <TouchableOpacity onPress={async () => {
+                        try {
+                            const credential = firebase.auth.PhoneAuthProvider.credential(
+                            verificationId,
+                            verificationCode
+                            );
+                            await firebase.auth().signInWithCredential(credential);
+                            firebase.database().ref('/history/' + result.user.id).set({
+                                email: result.user.email,
+                                logged: new Date()
+                            })
+                            alert('Phone authentication successful 👍');
+                            axios({
+                                method: 'post',
+                                url: 'http://10.0.2.2:8000/google',
+                                data: result.user,
+                            })
+                                .then(resp => {
+                                    if (resp.data != 'no such user') {
+                                        setIsVisible(false)
+                                        updateData(resp.data)
+                                        return navigation.navigate('Profile')
+                                    } else {
+                                        setErr(resp.data)
+                                        alert(err)
+                                    }
+                                })
+                                .catch(error => {
+                                    setErr(error)
+                                    alert(err)
+                                })
+                        } catch (err) {
+                            alert(`Error: ${err.message}`);
+                        }
+                    }}
+                    >
+                        <Text>Confirm verification code</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => setIsVisible(false)}>
+                        <Text>Cancel</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
         </View>
         
         
@@ -198,6 +295,16 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         alignSelf: 'center',
         marginRight: '16%'
+    },
+    Modal: {
+        marginTop: '10%',
+        height: Dimensions.get('screen').height - 200,
+        width: '80%',
+        borderWidth: 1,
+        borderRadius: 20,
+        color: 'grey',
+        alignSelf: 'center',
+        backgroundColor: 'white',
     },
 })
 

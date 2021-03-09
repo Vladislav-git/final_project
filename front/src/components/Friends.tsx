@@ -10,6 +10,7 @@ const Friends = () => {
     const {updateData}:any = useUpdateC();
     const [friends, setFriends] = useState([])
     const [isVisible, setIsVisible] = useState(false)
+    const [sort, setSort] = useState('')
 
     
 
@@ -65,6 +66,10 @@ const Friends = () => {
             >
                 <View style={styles.Modal}>
                     <Text>111</Text>
+                    <TextInput 
+                    value={sort}
+                    onChangeText={(text) => setSort(text)}
+                    />
                     <TouchableOpacity style={styles.Button} onPress={() => setIsVisible(false)}>
                         <Text style={styles.ButtonText}>Cancel</Text>
                     </TouchableOpacity>
