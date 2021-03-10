@@ -1,5 +1,5 @@
 import React, {useState, useRef} from 'react';
-import {Text, TouchableOpacity, TextInput, View, StyleSheet, Image, Modal, Dimensions} from 'react-native';
+import {Text, TouchableOpacity, TextInput, View, StyleSheet, Image, Modal, Dimensions, Platform} from 'react-native';
 import {FirebaseRecaptchaVerifierModal, FirebaseRecaptchaBanner } from 'expo-firebase-recaptcha';
 import axios from 'axios';
 import {useC, useUpdateC} from '../context/Context'
@@ -28,7 +28,7 @@ const Login = ({navigation}:any) => {
     const [verificationCode, setVerificationCode] = useState('');
     const [isVisible, setIsVisible] = useState(false)
     const [result, setResult]:any = useState()
-
+    
     const handleGoogle = async () => {
         try {
             const result:any = await Google.logInAsync({
@@ -38,25 +38,6 @@ const Login = ({navigation}:any) => {
             if (result.type === 'success') {
                 setResult(result)
                 setIsVisible(true)
-                
-                // axios({
-                //     method: 'post',
-                //     url: 'http://10.0.2.2:8000/google',
-                //     data: result.user,
-                // })
-                //     .then(resp => {
-                //         if (resp.data != 'no such user') {
-                //             updateData(resp.data)
-                //             return navigation.navigate('Profile')
-                //         } else {
-                //             setErr(resp.data)
-                //             alert(err)
-                //         }
-                //     })
-                //     .catch(error => {
-                //         setErr(error)
-                //         alert(err)
-                //     })
             } else {
                 setErr('err')
                 alert(err)
@@ -67,14 +48,13 @@ const Login = ({navigation}:any) => {
         }
     }
 
-
     const handleSubmit = (shema:any) => {
         return loginShema.validate(shema)
             .then(data => {
                 const validData = {...data}
                 axios({
                     method: 'post',
-                    url: 'http://10.0.2.2:8000/login',
+                    url: 'http://192.168.31.181:8000/login', //192.168.31.181
                     data: validData,
                 })
                     .then(resp => {
@@ -180,11 +160,19 @@ const Login = ({navigation}:any) => {
                             verificationId,
                             verificationCode
                             );
-                            await firebase.auth().signInWithCredential(credential);
-                            firebase.database().ref('/history/' + result.user.id).set({
-                                email: result.user.email,
-                                logged: new Date()
-                            })
+                            const userInfo = await firebase.auth().signInWithCredential(credential);
+                            const currentUser = await firebase.auth().currentUser
+                            if (userInfo.additionalUserInfo?.isNewUser) {
+                                firebase.database().ref('/history/' + currentUser?.uid).set({
+                                    email: result.user.email,
+                                    logged: new Date()
+                                })
+                            } else {
+                                firebase.database().ref('/history/' + currentUser?.uid).update({
+                                    email: result.user.email,
+                                    last_logged: new Date()
+                                })
+                            }
                             alert('Phone authentication successful 👍');
                             axios({
                                 method: 'post',
@@ -307,5 +295,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
 })
+
 
 export default Login;

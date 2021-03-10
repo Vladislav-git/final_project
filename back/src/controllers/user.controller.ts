@@ -6,6 +6,7 @@ class UsersController {
 	service = usersService;
 
 	login = async (req:any, res:any, next:any) => {
+		console.log(1)
 		res.send(await this.service.login(req.body));
 	};
 
