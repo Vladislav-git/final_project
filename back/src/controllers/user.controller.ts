@@ -21,6 +21,10 @@ class UsersController {
 	addPost = async (req:any, res:any, next:any) => {
 		res.send(await this.service.addPost(req.body));
 	}
+	
+	addChat = async (req:any, res:any, next:any) => {
+		res.send(await this.service.addChat(req.body, req.online));
+	}
 
 	addComment = async (req:any, res:any, next:any) => {
 		res.send(await this.service.addComment(req.body));
@@ -32,6 +36,14 @@ class UsersController {
 
 	addPhoto = async (req:any, res:any, next:any) => {
 		res.send(await this.service.addPhoto(req.body));
+	}
+
+	addFriend = async (req:any, res:any, next:any) => {
+		res.send(await this.service.addFriend(req.body, req.online));
+	}
+
+	removeFriend = async (req:any, res:any, next:any) => {
+		res.send(await this.service.removeFriend(req.body, req.online));
 	}
 
 	updateProfile = async (req:any, res:any, next:any) => {
@@ -46,8 +58,9 @@ class UsersController {
 		res.send(await this.service.getChats(req.online));
 	}
 
-	addChat = async (req:any, res:any, next:any) => {
-		res.send(await this.service.addChat(req.body, req.online));
+	getUsers = async (req:any, res:any, next:any) => {
+		res.send(await this.service.getUsers(req.online));
 	}
+
 }
 export const controller = new UsersController();

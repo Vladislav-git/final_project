@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import {Text, View, Image, ScrollView, StyleSheet, TextInput, Modal, Dimensions, TouchableOpacity} from 'react-native'
 import {useC, useUpdateC} from '../context/Context'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 
 const Friends = () => {
@@ -11,6 +12,7 @@ const Friends = () => {
     const [friends, setFriends] = useState([])
     const [isVisible, setIsVisible] = useState(false)
     const [sort, setSort] = useState('')
+    const [users, setUsers] = useState([])
 
     
 
@@ -24,13 +26,37 @@ const Friends = () => {
                     setFriends(friendsInfoList.data)
                 })
                 .catch(err => alert(err))
+            axios('http://10.0.2.2:8000/get-users', {
+                method: 'get',
+                headers: {Authorization: 'Bearer ' + data.token},
+            })
+                .then(usersInfoList => {
+                    setUsers(usersInfoList.data)
+                })
+                .catch(err => alert(err))
         })()
     },[])
 
-    const addFriends = () => {
-        
+    const addFriend = async (id:any) => {
+        axios('http://10.0.2.2:8000/add-friend', {
+            method: 'put',
+            headers: {Authorization: 'Bearer ' + data.token},
+            data: {id: id}
+        })
+            .then(resp => updateData({...data, user: resp.data}))
+            .catch(err => alert(err))
     }
 
+    const removeFriend = async (id:any) => {
+        axios('http://10.0.2.2:8000/remove-friend', {
+            method: 'put',
+            headers: {Authorization: 'Bearer ' + data.token},
+            data: {id: id}
+        })
+            .then(resp => updateData({...data, user: resp.data}))
+            .catch(err => alert(err))
+    }
+    console.log(data)
     return (
 
         
@@ -70,6 +96,52 @@ const Friends = () => {
                     value={sort}
                     onChangeText={(text) => setSort(text)}
                     />
+                    <ScrollView>
+                    {(users.length !== 0)
+                        ? users.map((user:any, index:any) => (
+                            <View key={index} style={styles.FriendContainer}>
+                                <Image source={(user.avatar !== '')
+                                    ? {uri: user.avatar}
+                                    : require('../../assets/default_user.png')
+                                }
+                                style={{width: '10%', height: '40%', marginTop: '1%', borderRadius:50}}
+                                />
+                                <Text style={{marginTop: '2%', marginLeft: '2%'}}>{user.firstname} {user.secondname}</Text>
+                                {(data.user.friends.length === 0)
+                                    ? <TouchableOpacity key={index} onPress={() => addFriend(user._id)}>
+                                        <MaterialCommunityIcons
+                                        style={{alignSelf: 'flex-end'}}
+                                        name="account-plus"
+                                        color={'black'}
+                                        size={26}
+                                        />
+                                    </TouchableOpacity>
+                                    : data.user.friends.map((friendId:any, index:any) => (
+                                    (friendId === user._id)
+                                        ? <TouchableOpacity key={index} onPress={() => removeFriend(user._id)}>
+                                            <MaterialCommunityIcons
+                                            style={{alignSelf: 'flex-end'}}
+                                            name="account-remove"
+                                            color={'black'}
+                                            size={26}
+                                            />
+                                        </TouchableOpacity>
+                                        : <TouchableOpacity key={index} onPress={() => addFriend(user._id)}>
+                                            <MaterialCommunityIcons
+                                            style={{alignSelf: 'flex-end'}}
+                                            name="account-plus"
+                                            color={'black'}
+                                            size={26}
+                                            />
+                                        </TouchableOpacity>
+                                ))}
+                                
+                                
+                            </View>
+                        ))
+                        : <Text style={{marginLeft: '5%'}}>no users</Text>
+                    }
+                    </ScrollView>
                     <TouchableOpacity style={styles.Button} onPress={() => setIsVisible(false)}>
                         <Text style={styles.ButtonText}>Cancel</Text>
                     </TouchableOpacity>

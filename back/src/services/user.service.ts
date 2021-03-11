@@ -74,6 +74,18 @@ class UsersService {
 		return 'comment created'
 	}
 
+	removeFriend = async (user_id:any, current_user:any) => {
+		const currentUser:any = await usermodel.find({email: current_user})
+		const user:any = await usermodel.find({_id: user_id.id})
+		const indexC:any = currentUser[0].friends.findIndex((item:any) => mongoose.Types.ObjectId(item) === mongoose.Types.ObjectId(user[0]._id))
+		const indexU:any = user[0].friends.findIndex((item:any) => mongoose.Types.ObjectId(item) === mongoose.Types.ObjectId(currentUser[0]._id))
+		currentUser[0].friends.splice(indexC, 1)
+		user[0].friends.splice(indexU, 1)
+		await usermodel.updateOne({email: current_user}, currentUser[0])
+		await usermodel.updateOne({email: user[0].email}, user[0])
+		return currentUser[0]
+	}
+
 	getPosts = async () => {
 		const posts = await postmodel.find()
 		return posts
@@ -121,19 +133,39 @@ class UsersService {
 		return {chatUsersInfo, chats}
 	}
 
+	getUsers = async (current_user:any) => {
+		const allUsers = await usermodel.find( { email: { $nin: current_user } } )
+		return allUsers
+	}
+
 	addChat = async (body:any, current_user:any) => {
 		const chatUser:any = await usermodel.find({email: body.chat_user})
 		const currentUser:any = await usermodel.find({email: current_user})
-		const newChat:any = await chatmodel.create({
-			chat_user_id: mongoose.Types.ObjectId(chatUser[0]._id),
-			current_user_id: mongoose.Types.ObjectId(currentUser[0]._id)
-		})
-		
-		chatUser[0].chats.push(newChat)
-		currentUser[0].chats.push(newChat)
+		const commonChat = currentUser[0].chats.filter((chat:any) => chatUser[0].chats.indexOf(chat) >= 0)
+		if (commonChat.length === 0) {
+			const newChat:any = await chatmodel.create({
+				chat_user_id: mongoose.Types.ObjectId(chatUser[0]._id),
+				current_user_id: mongoose.Types.ObjectId(currentUser[0]._id)
+			})
+			
+			chatUser[0].chats.push(newChat)
+			currentUser[0].chats.push(newChat)
+			await usermodel.updateOne({email: current_user}, currentUser[0])
+			await usermodel.updateOne({email: body.chat_user}, chatUser[0])
+			return 'new chat created'
+		} else {
+			return 'chat already exists'
+		}
+	}
+
+	addFriend = async (user_id:any, current_user:any) => {
+		const currentUser:any = await usermodel.find({email: current_user})
+		const user:any = await usermodel.find({_id: user_id.id})
+		currentUser[0].friends.push(user[0]._id)
+		user[0].friends.push(currentUser[0]._id)
 		await usermodel.updateOne({email: current_user}, currentUser[0])
-		await usermodel.updateOne({email: body.chat_user}, chatUser[0])
-		return 'new chat created'
+		await usermodel.updateOne({email: user[0].email}, user[0])
+		return currentUser[0]
 	}
 
 };

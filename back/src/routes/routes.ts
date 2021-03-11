@@ -14,6 +14,7 @@ export default router
     .get('/get-friends', auth, controller.getFriends)
     .get('/get-posts', auth, controller.getPosts)
     .get('/get-chats', auth, controller.getChats)
+    .get('/get-users', auth, controller.getUsers)
     .post('/login', loginValidate, controller.login)
     .post('/register', registerValidate, controller.register)
     .post('/google', loginValidate, controller.google)
@@ -21,6 +22,8 @@ export default router
     .post('/add-comment', controller.addComment)
     .post('/add-photo', auth, controller.addPhoto)
     .post('/add-chat', auth, controller.addChat)
+    .put('/add-friend', auth, controller.addFriend)
+    .put('/remove-friend', auth, controller.removeFriend)
     .put('/update-profile', auth, controller.updateProfile)
 
 
