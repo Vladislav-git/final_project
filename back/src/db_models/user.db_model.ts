@@ -12,6 +12,8 @@ const commentSchema = new Schema ({
 })
 
 const postShema = new Schema ({
+    user_name: String,
+    user_img: String,
     user_id: {type: Schema.Types.ObjectId, ref: 'users'},
     post_text: String,
     post_img: String,

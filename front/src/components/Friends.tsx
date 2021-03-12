@@ -107,8 +107,16 @@ const Friends = () => {
                                 style={{width: '10%', height: '40%', marginTop: '1%', borderRadius:50}}
                                 />
                                 <Text style={{marginTop: '2%', marginLeft: '2%'}}>{user.firstname} {user.secondname}</Text>
-                                {(data.user.friends.length === 0)
-                                    ? <TouchableOpacity key={index} onPress={() => addFriend(user._id)}>
+                                {data.user.friends.filter((friendId:any) => friendId === user._id)
+                                    ? <TouchableOpacity key={index} onPress={() => removeFriend(user._id)}>
+                                        <MaterialCommunityIcons
+                                        style={{alignSelf: 'flex-end'}}
+                                        name="account-remove"
+                                        color={'black'}
+                                        size={26}
+                                        />
+                                    </TouchableOpacity>
+                                    : <TouchableOpacity key={index} onPress={() => addFriend(user._id)}>
                                         <MaterialCommunityIcons
                                         style={{alignSelf: 'flex-end'}}
                                         name="account-plus"
@@ -116,8 +124,19 @@ const Friends = () => {
                                         size={26}
                                         />
                                     </TouchableOpacity>
+                                }
+                                {/* {(data.user.friends.length === 0)
+                                    ? <TouchableOpacity key={index} onPress={() => addFriend(user._id)}>
+                                        <MaterialCommunityIcons
+                                        style={{alignSelf: 'flex-end'}}
+                                        name="account-plus"
+                                        color={'black'}
+                                        size={26}
+                                        />
+                                        <Text>{'1'}</Text>
+                                    </TouchableOpacity>
                                     : data.user.friends.map((friendId:any, index:any) => (
-                                    (friendId === user._id)
+                                    (friendId.toString() === user._id.toString())
                                         ? <TouchableOpacity key={index} onPress={() => removeFriend(user._id)}>
                                             <MaterialCommunityIcons
                                             style={{alignSelf: 'flex-end'}}
@@ -125,6 +144,7 @@ const Friends = () => {
                                             color={'black'}
                                             size={26}
                                             />
+                                            <Text>{friendId.toString() === user._id.toString()? 'true1':'false1'}</Text>
                                         </TouchableOpacity>
                                         : <TouchableOpacity key={index} onPress={() => addFriend(user._id)}>
                                             <MaterialCommunityIcons
@@ -133,10 +153,9 @@ const Friends = () => {
                                             color={'black'}
                                             size={26}
                                             />
+                                            <Text>{friendId.toString() === user._id.toString()? 'true2':'false2'}</Text>
                                         </TouchableOpacity>
-                                ))}
-                                
-                                
+                                ))} */}
                             </View>
                         ))
                         : <Text style={{marginLeft: '5%'}}>no users</Text>

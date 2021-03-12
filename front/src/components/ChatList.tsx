@@ -10,9 +10,10 @@ const ChatList = ({navigation}:any) => {
     const {darkTheme, data}:any = useC();
     const {updateData}:any = useUpdateC();
 
-    const [chatUsersInfo, setChatUsersInfo] = useState([])
+    const [chatUsersInfo, setChatUsersInfo]:any = useState([])
     const [isVisible, setIsVisible] = useState(false)
     const [friends, setFriends] = useState([])
+    const [chats, setChats] = useState([])
 
     useEffect(() => {
         (async () => {
@@ -21,12 +22,12 @@ const ChatList = ({navigation}:any) => {
                 headers: {Authorization: 'Bearer ' + data.token},
             })
                 .then((respchats:any) => {
-                    updateData({...data, current_chat: respchats.data.chats})
+                    setChats(respchats.data.chats)
                     setChatUsersInfo(respchats.data.chatUsersInfo)
                 })
                 .catch(err => {
                     alert(err)
-                    navigation.navigate('Login')
+                    // navigation.navigate('Login')
                 })
             axios('http://10.0.2.2:8000/get-friends', {
                 method: 'get',
@@ -46,14 +47,16 @@ const ChatList = ({navigation}:any) => {
             data: {chat_user: email}
         })
             .then(resp => {
-                if (resp.data === 'chat already exists') {
-                    //
+                if (resp.data.msg === 'new chat created') {
+                    updateData({...data, user: resp.data.current_user})
+                } else {
+                    console.log(resp)
                 }
             })
             .catch(err => alert(err.message))
     }
 
-    // console.log(chatUsersInfo)
+    // console.log(chats.filter((chat:any) => chatUsersInfo[0].chats.indexOf(chat) >= 0))
 
     return (
         <View style={{flex: 1, height: '100%'}}>
@@ -66,24 +69,25 @@ const ChatList = ({navigation}:any) => {
             />
             <ScrollView>
             {(chatUsersInfo.length !== 0)
-                ? chatUsersInfo.map((chat:any, index) => (
+                ? chatUsersInfo.map((chatUser:any, index:number) => (
                     <View key={index} style={styles.ChatListBox}>
                         <TouchableOpacity
                         style={styles.ChatBox}
                         activeOpacity={1}
                         onPress={() => {
-                            updateData({...data}, chat)
+                            const current_chat = chats.filter((chat:any) => chatUser._id.toString() === chat.chat_user_id.toString() || chatUser._id.toString() === chat.current_user_id.toString())
+                            updateData({...data, current_chat})
                             navigation.navigate('Messages')
                         }}
                         >
                             <Image
-                            source={(chat.avatar !== null && chat.avatar !== '')
-                            ? {uri: chat.avatar}
+                            source={(chatUser.avatar !== null && chatUser.avatar !== '')
+                            ? {uri: chatUser.avatar}
                             : require('../../assets/default_user.png')
                         }
                         style={styles.Image}
                         />
-                            <Text style={styles.Text}>{chat.firstname} {chat.secondname}</Text>
+                            <Text style={styles.Text}>{chatUser.firstname} {chatUser.secondname}</Text>
                         </TouchableOpacity>
                     </View>
                 ))
@@ -99,21 +103,27 @@ const ChatList = ({navigation}:any) => {
                     {(friends.length !== 0)
                         ? friends.map((friend:any, index:number) => (
                             <View style={styles.FriendContainer} key={index}>
-                                <Image source={(friend.avatar !== '')
-                                    ? {uri: friend.avatar}
-                                    : require('../../assets/default_user.png')
-                                }
-                                style={{width: '10%', height: '40%', marginTop: '1%', borderRadius:50}}
-                                />
-                                <Text style={{marginTop: '2%', marginLeft: '2%'}}>{friend.firstname} {friend.secondname}</Text>
-                                <TouchableOpacity onPress={() => addChat(friend.email)}>
-                                    <MaterialCommunityIcons
-                                    style={{alignSelf: 'flex-end'}}
-                                    name="chat-plus"
-                                    color={'black'}
-                                    size={26}
+                                {friend.chats.filter((chat:any) => data.user.chats.indexOf(chat) >= 0) && friend.chats.length !== 0
+                                ? null
+                                :<View style={{flexDirection: 'row'}}>
+                                    <Image source={(friend.avatar !== '')
+                                        ? {uri: friend.avatar}
+                                        : require('../../assets/default_user.png')
+                                    }
+                                    style={{width: '10%', height: '40%', marginTop: '1%', borderRadius:50}}
                                     />
-                                </TouchableOpacity>
+                                    <Text style={{marginTop: '2%', marginLeft: '2%'}}>{friend.firstname} {friend.secondname}</Text>
+                                    <TouchableOpacity onPress={() => addChat(friend.email)}>
+                                        <MaterialCommunityIcons
+                                        style={{alignSelf: 'flex-end'}}
+                                        name="chat-plus"
+                                        color={'black'}
+                                        size={26}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                                }
+                                
                             </View>
                         ))
                         : <Text style={{marginLeft: '5%'}}>no friends</Text> 
@@ -184,7 +194,7 @@ const styles = StyleSheet.create({
     },
     FriendContainer: {
         flexDirection: 'row',
-        height: '50%',
+        height: '30%',
         marginLeft: '5%'
     },
     Box: {

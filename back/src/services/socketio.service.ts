@@ -10,15 +10,17 @@ const Socket = (io:any) => {
                 chat_id: msg.current_chat[0]._id,
                 message_text: msg.message,
                 message_img: '',
-                created_date: (new Date()).toString()
+                created_date: (Date.now()).toString()
             })
         })
         client.on('get-messages', async(msg:any) => {
+            console.log(msg)
             const userMessages:any = await messagemodel.find({chat_id: msg.chat_id, user_id: msg.user_id})
-            const chatUserMessages:any = await messagemodel.find({chat_id: msg.chat_id, user_id: msg.chat})
-            const allChats = userMessages.concat(chatUserMessages)
+            const chatUserMessages:any = await messagemodel.find({chat_id: msg.chat_id, user_id: msg.chat_user})
+            const allMessages = userMessages.concat(chatUserMessages).sort((message1:any, message2:any) => Number(message1.created_date) > Number(message2.created_date) ? 1 : -1)
             const chatUserData:any = await usermodel.find({_id: msg.chat_user})
-            client.emit('get-messages', {allChats, chatUserInfo: {firstname: chatUserData[0].firstname, secondname: chatUserData[0].secondname, avatar: chatUserData[0].avatar}})
+            console.log(chatUserMessages, userMessages, allMessages)
+            client.emit('get-messages', {allMessages, chatUserInfo: {firstname: chatUserData[0].firstname, secondname: chatUserData[0].secondname, avatar: chatUserData[0].avatar}})
         })
       })
 }

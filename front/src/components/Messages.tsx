@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {Text, TextInput, View, TouchableOpacity, ScrollView, Image, StyleSheet} from 'react-native'
+import {Text, TextInput, View, TouchableOpacity, ScrollView, Image, StyleSheet, Dimensions} from 'react-native'
 import {io} from 'socket.io-client'
 import {useC, useUpdateC} from '../context/Context'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -9,15 +9,21 @@ const Messages = () => {
     const {darkTheme, data}:any = useC();
     const {updateData}:any = useUpdateC();
 
-    const [allChats, setAllChats] = useState([])
+    const [allMessages, setAllMessages] = useState([])
     const [chatUserInfo, setChatUserInfo]:any = useState([])
     const [message, setMessage] = useState('')
 
+    const info = {
+        chat_id: data.current_chat[0]._id,
+        user_id: data.user._id,
+        chat_user: (data.user._id === data.current_chat[0].chat_user_id) ? data.current_chat[0].current_user_id : data.current_chat[0].chat_user_id
+    }
+
     useEffect(() => {
-        (() => {
-            socket.emit('get-messages', {chat_id: data.current_chat[0]._id, user_id: data.user._id, chat_user: data.current_chat[0].user_id})
+        (async() => {
+            socket.emit('get-messages', info)
             socket.on('get-messages', (msg:any) => {
-                setAllChats(msg.allChats)
+                setAllMessages(msg.allMessages)
                 setChatUserInfo(msg.chatUserInfo)
             })
         })()
@@ -30,10 +36,8 @@ const Messages = () => {
         setMessage('')
     }
 
-    console.log(allChats)
-
     return (
-        <View>
+        <View style={{height: Dimensions.get('screen').height-130,}}>
             <View style={styles.ChatUser}>
                 <Image
                 source={(chatUserInfo.avatar !== '')
@@ -45,11 +49,16 @@ const Messages = () => {
                 <Text style={styles.Text}>{chatUserInfo.firstname} {chatUserInfo.secondname}</Text>
             </View>
             <ScrollView style={styles.Messages}>
-                {(allChats[0] !== undefined)
-                    ? allChats.map((userMessage:any, index) => (
-                        <View key={index} style={styles.MessageTextBox}>
-                            <Text style={styles.MessageText}>{userMessage.message_text}</Text>
-                        </View>
+                {(allMessages.length !== 0)
+                    ? allMessages.map((userMessage:any, index) => (
+                        (userMessage.user_id === data.user._id)
+                            ? <View key={index} style={styles.MessageTextBox}>
+                                <Text style={styles.UserMessageText}>{userMessage.message_text}</Text>
+                            </View>
+                            : <View key={index} style={styles.MessageTextBox}>
+                                <Text style={styles.ChatUserMessageText}>{userMessage.message_text}</Text>
+                            </View>
+                        
                     ))
                     : null
                 }
@@ -121,13 +130,22 @@ const styles = StyleSheet.create({
     MessageTextBox: {
         
     },
-    MessageText: {
+    ChatUserMessageText: {
         borderWidth: 1,
         minWidth: '30%',
         maxWidth: '50%',
         borderRadius: 10,
         textAlign: 'auto',
         marginLeft: '2%',
+        marginTop: '1%'
+    },
+    UserMessageText: {
+        borderWidth: 1,
+        minWidth: '30%',
+        maxWidth: '50%',
+        borderRadius: 10,
+        textAlign: 'auto',
+        marginLeft: '50%',
         marginTop: '1%'
     }
 })

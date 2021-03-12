@@ -33,12 +33,12 @@ const Profile = ({navigation}:any) => {
                     alert('Sorry, we need camera roll permissions to make this work!');
                 }
             }
-            axios('http://10.0.2.2:8000/get-posts',{
+            axios(`http://10.0.2.2:8000/get-user-posts/${data.user._id}`,{
                 method: 'get',
                 headers: {Authorization: 'Bearer ' + data.token},
             })
-                .then(allPosts => {
-                    setPosts(allPosts)
+                .then(allUserPosts => {
+                    setPosts(allUserPosts)
                 })
                 .catch(error => {
                     alert(error)

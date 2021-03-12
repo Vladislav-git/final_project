@@ -30,8 +30,8 @@ class UsersController {
 		res.send(await this.service.addComment(req.body));
 	}
 
-	getPosts = async (req:any, res:any, next:any) => {
-		res.send(await this.service.getPosts());
+	getUserPosts = async (req:any, res:any, next:any) => {
+		res.send(await this.service.getUserPosts(req.params.id));
 	}
 
 	addPhoto = async (req:any, res:any, next:any) => {
@@ -60,6 +60,10 @@ class UsersController {
 
 	getUsers = async (req:any, res:any, next:any) => {
 		res.send(await this.service.getUsers(req.online));
+	}
+
+	getAllPosts = async (req:any, res:any, next:any) => {
+		res.send(await this.service.getAllPosts());
 	}
 
 }
