@@ -14,7 +14,6 @@ const Socket = (io:any) => {
             })
         })
         client.on('get-messages', async(msg:any) => {
-            console.log(msg)
             const userMessages:any = await messagemodel.find({chat_id: msg.chat_id, user_id: msg.user_id})
             const chatUserMessages:any = await messagemodel.find({chat_id: msg.chat_id, user_id: msg.chat_user})
             const allMessages = userMessages.concat(chatUserMessages).sort((message1:any, message2:any) => Number(message1.created_date) > Number(message2.created_date) ? 1 : -1)

@@ -18,10 +18,16 @@ const Profile = ({navigation}:any) => {
     const [profile, setProfile] = useState(data.user)
 
     let initialPost = {
+        user_name: data.user.firstname + data.user.secondname,
+        user_img: data.user.avatar,
         user_id: data.user._id,
         post_text: '',
         post_img: '',
         post_video: '',
+        like_number: 0,
+        who_liked: [],
+        comments: [],
+        comment_number: 0
     }
     const [newPost, setNewPost] = useState(initialPost)
 
@@ -156,7 +162,7 @@ const Profile = ({navigation}:any) => {
                 <View style={styles.Profile}>
                     <View style={{width: '10%', marginTop: '2%', marginBottom: '2%'}}>
                         <MaterialCommunityIcons
-                        name='phone'
+                        name='cake'
                         color={'#41454a'}
                         size={26}
                         style={{alignSelf:'flex-end'}}
@@ -168,7 +174,7 @@ const Profile = ({navigation}:any) => {
                         style={{alignSelf:'flex-end'}}
                         />
                         <MaterialCommunityIcons
-                        name='cake'
+                        name='phone'
                         color={'#41454a'}
                         size={26}
                         style={{alignSelf:'flex-end'}}
@@ -456,6 +462,15 @@ const styles = StyleSheet.create({
         color: '#006aff',
         fontWeight: 'bold',
         alignSelf: 'center',
+    },
+    Input: {
+        alignSelf: 'center',
+        height: 40,
+        width: '90%',
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 5,
+        marginTop: '2%'
     },
     InputHeader: {
         fontSize: 16,

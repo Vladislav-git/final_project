@@ -9,6 +9,7 @@ const commentSchema = new Schema ({
     comment_text: String,
     comment_img: String,
     comment_video: String,
+    created_date: String
 })
 
 const postShema = new Schema ({
@@ -18,6 +19,10 @@ const postShema = new Schema ({
     post_text: String,
     post_img: String,
     post_video: String,
+    like_number: Number,
+    who_liked: Array,
+    comments: Array,
+    comment_number: Number
 })
 
 const userShema = new Schema ({

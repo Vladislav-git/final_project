@@ -6,7 +6,6 @@ class UsersController {
 	service = usersService;
 
 	login = async (req:any, res:any, next:any) => {
-		console.log(1)
 		res.send(await this.service.login(req.body));
 	};
 
@@ -63,7 +62,15 @@ class UsersController {
 	}
 
 	getAllPosts = async (req:any, res:any, next:any) => {
-		res.send(await this.service.getAllPosts());
+		res.send(await this.service.getAllPosts(req.online));
+	}
+
+	changeLike = async (req:any, res:any, next:any) => {
+		res.send(await this.service.changeLike(req.body, req.online));
+	}
+
+	getPostComments = async (req:any, res:any, next:any) => {
+		res.send(await this.service.getPostComments(req.params.id));
 	}
 
 }

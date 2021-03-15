@@ -55,10 +55,16 @@ class UsersService {
 
 	addPost = async (body:any) => {
 		const post:any = await postmodel.create({
+			user_name: body.user_name,
+			user_img: body.user_img,
 			user_id: mongoose.Types.ObjectId(body.user_id),
 			post_text: body.post_text,
 			post_img: body.post_img,
 			post_video: body.post_video,
+			like_number: body.like_number,
+			who_liked: body.who_liked,
+			comments: body.comments,
+			comment_number: body.comment_number
 		})
 		return 'post saved'
 	}
@@ -67,9 +73,10 @@ class UsersService {
 		await commentmodel.create({
 			user_id: mongoose.Types.ObjectId(body.user_id),
 			post_id: mongoose.Types.ObjectId(body.post_id),
-			comment_text: 'String',
-			comment_img: 'String',
-			comment_video: 'String',
+			comment_text: body.comment_text,
+			comment_img: body.comment_img,
+			comment_video: body.comment_video,
+			created_date: (Date.now()).toString()
 		})
 		return 'comment created'
 	}
@@ -165,9 +172,25 @@ class UsersService {
 		return currentUser[0]
 	}
 
-	getAllPosts = async () => {
-		const allPosts = await postmodel.find()
+	getAllPosts = async (current_user:any) => {
+		const user = await usermodel.find({email: current_user})
+		const allPosts = await postmodel.find({user_id: { $nin: user[0]._id }})
 		return allPosts
+	}
+
+	changeLike = async (post:any, current_user:any) => {
+		await postmodel.updateOne({_id: post._id}, post)
+		return 'ok'
+	}
+
+	getPostComments = async (postId:any) => {
+		const post:any = await postmodel.find({_id: postId})
+		let comments:any = []
+		post[0].comments.map(async (commentId:any) => {
+			const comment = await commentmodel.find({_id: commentId})
+			comments.push(comment[0])
+		})
+		return comments
 	}
 
 };
