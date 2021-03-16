@@ -5,6 +5,7 @@ import {useC, useUpdateC} from '../context/Context'
 import * as ImagePicker from 'expo-image-picker';
 import {Picker} from '@react-native-picker/picker';
 import { Video } from 'expo-av';
+// import { Camera } from 'expo-camera'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const Profile = ({navigation}:any) => {
@@ -16,6 +17,7 @@ const Profile = ({navigation}:any) => {
     const [profileModalIsVisible, setProfileModalIsVisible] = useState(false)
     const [postModalIsVisible, setPostModalIsVisible] = useState(false)
     const [profile, setProfile] = useState(data.user)
+    
 
     let initialPost = {
         user_name: data.user.firstname + data.user.secondname,
@@ -44,7 +46,7 @@ const Profile = ({navigation}:any) => {
                 headers: {Authorization: 'Bearer ' + data.token},
             })
                 .then(allUserPosts => {
-                    setPosts(allUserPosts)
+                    setPosts(allUserPosts.data)
                 })
                 .catch(error => {
                     alert(error)
@@ -53,6 +55,8 @@ const Profile = ({navigation}:any) => {
         })()
         
     },[])
+
+    console.log(posts)
 
     const saveProfileData = () => {
         axios('http://10.0.2.2:8000/update-profile',{
@@ -135,6 +139,36 @@ const Profile = ({navigation}:any) => {
         });
         setProfile({...profile, avatar: result.uri})
     }
+
+
+    const changeLike = async (post:any, number:number) => {
+		console.log(post)
+		if (number === 0) {
+			post.like_number -= 1
+			post.who_liked = post.who_liked.filter((userId:any) => userId !== data.user._id)
+			axios('http://10.0.2.2:8000/change-like', {
+				method: 'put',
+				headers: {Authorization: 'Bearer ' + data.token},
+				data: post
+			})
+				.then(info => console.log(info.data))
+				.catch(err => alert(err))
+		} else {
+			post.like_number += 1
+			post.who_liked.push(data.user._id)
+			axios('http://10.0.2.2:8000/change-like', {
+				method: 'put',
+				headers: {Authorization: 'Bearer ' + data.token},
+				data: post
+			})
+				.then(info => console.log(info.data))
+				.catch(err => alert(err))
+		}
+	}
+
+    // const camera = async (ref) => {
+    //     const photo = await ref.takePictureAsync()
+    // }
     
     return (
         <SafeAreaView style={styles.container}>
@@ -206,9 +240,9 @@ const Profile = ({navigation}:any) => {
                     onFocus={() => setPostModalIsVisible(true)}
                     />
                 </View>
-                {(posts.data !== undefined)
+                {(posts.length !== 0)
                 ?
-                    posts.data.map((post:any, index:any) => (
+                    posts.map((post:any, index:any) => (
                         <View key={index} style={styles.Post}>
                             <View key={index} style={{flexDirection: 'row'}}>
                                 <Image
@@ -244,11 +278,49 @@ const Profile = ({navigation}:any) => {
                             :
                                 null
                             }
+                            <View>
+                                {post.who_liked.find((item:any) => item === data.user._id)
+                                    ? <View style={{borderWidth: 1, flexDirection: 'row'}}>
+                                        <TouchableOpacity onPress={() => changeLike(post, 0)}>
+                                            <MaterialCommunityIcons
+                                            name='heart'
+                                            color={'red'}
+                                            size={26}
+                                            />
+                                        </TouchableOpacity>
+                                        <Text>{post.like_number}</Text>
+                                    </View>
+                                    : <View style={{borderWidth: 1, flexDirection: 'row', height: 50}}>
+                                        <TouchableOpacity onPress={() => changeLike(post, 1)}>
+                                            <MaterialCommunityIcons
+                                            name='heart'
+                                            color={'#41454a'}
+                                            size={26}
+                                            />
+                                        </TouchableOpacity>
+                                        <Text>{post.like_number}</Text>
+                                        <Text></Text>
+                                    </View>
+                                }
+                                <TouchableOpacity onPress={() => {
+                                    updateData({...data, post})
+                                    navigation.navigate('Comments')
+                                    
+                                }}>
+                                    <MaterialCommunityIcons
+                                    name='comment'
+                                    color={'#41454a'}
+                                    size={26}
+                                    />
+                                    <Text>{post.comment_number}</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     ))
                 : 
                     null
                 }
+                {/* <Camera style={{height: '30%'}} type={Camera.Constants.Type.back} ref={(ref) => camera(ref)} /> */}
                 <View style={{marginBottom: '30%'}}></View>
             </ScrollView>
             {/* profile modal */}

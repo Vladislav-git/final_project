@@ -193,6 +193,11 @@ class UsersService {
 		return comments
 	}
 
+	getUserProfile = async (profileId:any) => {
+		const profile = await usermodel.find({_id: profileId})
+		console.log(profile)
+		return profile[0]
+	}
 };
 
 

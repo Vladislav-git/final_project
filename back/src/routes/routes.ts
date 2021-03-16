@@ -16,6 +16,7 @@ export default router
     .get('/get-user-posts/:id', auth, controller.getUserPosts)
     .get('/get-chats', auth, controller.getChats)
     .get('/get-users', auth, controller.getUsers)
+    .get('/get-user-profile/:id', auth, controller.getUserProfile)
     .get('/get-post-comments/:id', auth, controller.getPostComments)
     .post('/login', loginValidate, controller.login)
     .post('/register', registerValidate, controller.register)

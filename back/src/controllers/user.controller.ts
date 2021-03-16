@@ -73,5 +73,9 @@ class UsersController {
 		res.send(await this.service.getPostComments(req.params.id));
 	}
 
+	getUserProfile = async (req:any, res:any, next:any) => {
+		res.send(await this.service.getUserProfile(req.params.id));
+	}
+
 }
 export const controller = new UsersController();

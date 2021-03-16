@@ -7,6 +7,7 @@ import { Video } from 'expo-av';
 import axios from 'axios';
 import {useC, useUpdateC} from '../context/Context'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { Camera } from 'expo-camera'
 
 // Notifications.setNotificationHandler({
 // 	handleNotification: async () => ({
@@ -158,6 +159,11 @@ const News = ({navigation}:any) => {
 		}
 	}
 
+	const userProfile = (userId:any) => {
+		updateData({...data, user_profile: userId})
+		navigation.navigate('UserProfile')
+	}
+
 	// console.log(allPosts)
 
 	return (
@@ -166,18 +172,18 @@ const News = ({navigation}:any) => {
 				{(allPosts.length !== 0)
 					? allPosts.map((post:any, index:any) => (
                         <View key={index} style={styles.Post}>
-                            <View key={index} style={{flexDirection: 'row'}}>
+                            <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => userProfile(post.user_id)}>
                                 <Image
-                                source={(data.user.avatar !== '')
-                                ? {uri : data.user.avatar}
+                                source={(post.user_img !== '')
+                                ? {uri : post.user_img}
                                 : require('../../assets/default_user.png')
                                 }
                                 style={styles.UserImage}
                                 />
                                 <Text style={{marginLeft: '3%', marginTop: '4%'}}>
-                                    {data.user.firstname} {data.user.secondname}
+                                    {post.user_name}
                                 </Text>
-                            </View>
+                            </TouchableOpacity>
                             
                             <Text style={{marginLeft: '7%', marginTop: '4%'}}>
                                 {post.post_text}

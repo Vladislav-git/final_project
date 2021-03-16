@@ -24,11 +24,10 @@ const Comments = ({navigation}:any) => {
     const [comment, setComment] = useState(initialComment)
 
     useEffect(() => {
-        (async() => {
-            socket.emit('get-messages', info)
-            socket.on('get-messages', (msg:any) => {
-                // setAllMessages(msg.allMessages)
-                // setChatUserInfo(msg.chatUserInfo)
+        (() => {
+            socket.emit('get-comments', data.post._id)
+            socket.on('get-comments', (comments:any) => {
+                setAllComments(comments)
             })
         })()
     },[])
@@ -37,14 +36,12 @@ const Comments = ({navigation}:any) => {
 
     
 
-    const addComment = async () => {
-        axios(`http://10.0.2.2:8000/add-comment`, {
-				method: 'post',
-				headers: {Authorization: 'Bearer ' + data.token},
-                data: comment
-			})
-			.then((info:any) => console.log(info.data))
-			.catch(err => alert(err))
+    const addComment = (comment:any) => {
+        socket.emit('add-comment', comment)
+        setComment(initialComment)
+        socket.on('add-comment', (post:any) => {
+            updateData({...data, post: post})
+        })
     }
 
     console.log(allComments)
@@ -52,21 +49,22 @@ const Comments = ({navigation}:any) => {
     return (
         <View>
             <View>
-
+            {/* post here */}
             </View>
             <ScrollView>
                 {allComments.map((comment:any, index:number) => (
-                    <View>
-
+                    <View key={index}>
+                        <Text>{comment.comment_text}</Text>
                     </View>
                 ))}
 
             </ScrollView>
             <View>
                 <TextInput
-                onChangeText={(text:any) => setComment(text)}
+                value={comment.comment_text}
+                onChangeText={(text:any) => setComment({...comment, comment_text: text})}
                 />
-                <TouchableOpacity onPress={() => addComment()}>
+                <TouchableOpacity onPress={() => addComment(comment)}>
                     <MaterialCommunityIcons style={{alignSelf: 'center'}} name="send" color={'lightblue'} size={26} />
                 </TouchableOpacity>
             </View>
