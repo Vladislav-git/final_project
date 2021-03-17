@@ -44,8 +44,6 @@ const Comments = ({navigation}:any) => {
         })
     }
 
-    console.log(allComments)
-
     return (
         <View>
             <View>

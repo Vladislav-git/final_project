@@ -135,7 +135,6 @@ const News = ({navigation}:any) => {
     }, [])
 
 	const changeLike = async (post:any, number:number) => {
-		console.log(post)
 		if (number === 0) {
 			post.like_number -= 1
 			post.who_liked = post.who_liked.filter((userId:any) => userId !== data.user._id)
@@ -144,7 +143,7 @@ const News = ({navigation}:any) => {
 				headers: {Authorization: 'Bearer ' + data.token},
 				data: post
 			})
-				.then(info => console.log(info.data))
+				.then(info => console.log('ok'))
 				.catch(err => alert(err))
 		} else {
 			post.like_number += 1
@@ -154,7 +153,7 @@ const News = ({navigation}:any) => {
 				headers: {Authorization: 'Bearer ' + data.token},
 				data: post
 			})
-				.then(info => console.log(info.data))
+				.then(info => console.log('ok'))
 				.catch(err => alert(err))
 		}
 	}
@@ -164,14 +163,12 @@ const News = ({navigation}:any) => {
 		navigation.navigate('UserProfile')
 	}
 
-	// console.log(allPosts)
-
 	return (
-		<View style={{height: '100%'}}>
-			<ScrollView>
+		<View style={{...styles.MainView, backgroundColor: darkTheme ? 'black' : 'lightgrey'}}>
+			<ScrollView style={{height: '100%'}}>
 				{(allPosts.length !== 0)
 					? allPosts.map((post:any, index:any) => (
-                        <View key={index} style={styles.Post}>
+                        <View key={index} style={{...styles.Post, backgroundColor: darkTheme ? '#141414' : 'white'}}>
                             <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => userProfile(post.user_id)}>
                                 <Image
                                 source={(post.user_img !== '')
@@ -180,12 +177,12 @@ const News = ({navigation}:any) => {
                                 }
                                 style={styles.UserImage}
                                 />
-                                <Text style={{marginLeft: '3%', marginTop: '4%'}}>
+                                <Text style={{marginLeft: '3%', marginTop: '2%', color: darkTheme ? 'white' : 'black'}}>
                                     {post.user_name}
                                 </Text>
                             </TouchableOpacity>
                             
-                            <Text style={{marginLeft: '7%', marginTop: '4%'}}>
+                            <Text style={{...styles.PostText, color: darkTheme ? 'white' : 'black'}}>
                                 {post.post_text}
                             </Text>
                             {(post.post_img !== '')
@@ -206,41 +203,41 @@ const News = ({navigation}:any) => {
                             :
                                 null
                             }
-							{post.who_liked.find((item:any) => item === data.user._id)
-								? <View style={{borderWidth: 1, flexDirection: 'row'}}>
-									<TouchableOpacity onPress={() => changeLike(post, 0)}>
-										<MaterialCommunityIcons
-										name='heart'
-										color={'red'}
-										size={26}
-										/>
-									</TouchableOpacity>
-									<Text>{post.like_number}</Text>
-								</View>
-								: <View style={{borderWidth: 1, flexDirection: 'row', height: 50}}>
-									<TouchableOpacity onPress={() => changeLike(post, 1)}>
-										<MaterialCommunityIcons
-										name='heart'
-										color={'#41454a'}
-										size={26}
-										/>
-									</TouchableOpacity>
-									<Text>{post.like_number}</Text>
-									<Text></Text>
-								</View>
-							}
-							<TouchableOpacity onPress={() => {
-								updateData({...data, post})
-								navigation.navigate('Comments')
-								
-							}}>
-								<MaterialCommunityIcons
-								name='comment'
-								color={'#41454a'}
-								size={26}
-								/>
-								<Text>{post.comment_number}</Text>
-							</TouchableOpacity>
+							<View style={styles.PostBottom}>
+								{post.who_liked.find((item:any) => item === data.user._id)
+									? <View style={styles.Heart}>
+										<TouchableOpacity onPress={() => changeLike(post, 0)}>
+											<MaterialCommunityIcons
+											name='heart-outline'
+											color={'red'}
+											size={23}
+											/>
+										</TouchableOpacity>
+										<Text style={{...styles.HeartNumber, color: 'red'}}>{post.like_number}</Text>
+									</View>
+									: <View style={styles.Heart}>
+										<TouchableOpacity onPress={() => changeLike(post, 1)}>
+											<MaterialCommunityIcons
+											name='heart-outline'
+											color={darkTheme ? '#787878' : '#41454a'}
+											size={23}
+											/>
+										</TouchableOpacity>
+										<Text style={{...styles.HeartNumber, color: darkTheme ? '#787878' : '#41454a'}}>{post.like_number}</Text>
+									</View>
+								}
+								<TouchableOpacity style={styles.Comment} onPress={() => {
+									updateData({...data, post})
+									navigation.navigate('Comments')
+								}}>
+									<MaterialCommunityIcons
+									name='comment-outline'
+									color={darkTheme ? '#787878' : '#41454a'}
+									size={23}
+									/>
+									<Text style={{...styles.CommentNumber, color: darkTheme ? '#787878' : '#41454a'}}>{post.comment_number}</Text>
+								</TouchableOpacity>
+							</View>
                         </View>
 					))
 					: <Text>no posts yet</Text>
@@ -251,32 +248,78 @@ const News = ({navigation}:any) => {
 }
 
 const styles = StyleSheet.create({
+	MainView: {
+		flex: 1,
+		minWidth: 400,
+		maxWidth: 600,
+	},
 	Post: {
-        height: 200,
+		flex: 1,
         marginTop: '2%',
-        borderWidth: 1,
-        backgroundColor: 'white'
+        backgroundColor: 'white',
+		flexDirection: 'column',
+
     },
     UserImage: {
         width: 40,
         height: 40,
         borderRadius: 50,
-        marginLeft: '5%',
+        marginLeft: '4%',
         marginTop: '2%'
     },
-    PostImage: {
-        height: '40%',
-        width: '95%',
-        alignSelf: 'center',
-        marginTop: '5%'
-    },
-    PostVideo: {
-        height: '80%',
-        width: '80%',
-        alignSelf: 'flex-start',
-        marginLeft: '5%',
-        marginTop: '5%'
-    },
+	PostText: {
+		marginLeft: '7%',
+		marginTop: '4%',
+		// borderWidth: 1,
+		height: 25
+	},
+	PostImage: {
+		height: 200,
+		width: '100%',
+		alignSelf: 'center',
+		marginTop: '3%',
+		marginBottom: '3%'
+	},
+	PostVideo: {
+		height: 200,
+		width: '100%',
+		alignSelf: 'center',
+		marginTop: '3%'
+	},
+	PostBottom: {
+		flexDirection: 'row',
+		// borderWidth: 1,
+		height: 40,
+	},
+	Heart: {
+		flexDirection: 'row',
+		height: 40,
+		width: 50,
+		marginLeft: '4%',
+		marginTop: '2%'
+		// borderWidth: 1
+	},
+	Comment: {
+		flexDirection: 'row',
+		height: 40,
+		width: 50,
+		marginLeft: '10%',
+		marginTop: '2%'
+		// borderWidth: 1
+	},
+	HeartNumber: {
+		marginTop: '2%',
+		fontSize: 16,
+		fontStyle: 'normal',
+		marginLeft: '3%'
+	},
+	CommentNumber: {
+		marginTop: '2%',
+		fontSize: 16,
+		fontStyle: 'normal',
+		color: '#41454a',
+		marginLeft: '3%'
+	}
 });
 
 export default News;

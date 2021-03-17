@@ -62,7 +62,6 @@ const UserProfile = ({navigation}:any) => {
 
 
     const changeLike = async (post:any, number:number) => {
-		console.log(post)
 		if (number === 0) {
 			post.like_number -= 1
 			post.who_liked = post.who_liked.filter((userId:any) => userId !== data.user._id)
@@ -71,7 +70,7 @@ const UserProfile = ({navigation}:any) => {
 				headers: {Authorization: 'Bearer ' + data.token},
 				data: post
 			})
-				.then(info => console.log(info.data))
+				.then(info => console.log('ok'))
 				.catch(err => alert(err))
 		} else {
 			post.like_number += 1
@@ -81,12 +80,10 @@ const UserProfile = ({navigation}:any) => {
 				headers: {Authorization: 'Bearer ' + data.token},
 				data: post
 			})
-				.then(info => console.log(info.data))
+				.then(info => console.log('ok'))
 				.catch(err => alert(err))
 		}
 	}
-
-    console.log(profile)
 
     return (
         <SafeAreaView style={styles.container}>

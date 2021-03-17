@@ -16,9 +16,9 @@ const TabNavigation = () => {
 
     return (
         <Tab.Navigator
-        activeColor={darkTheme ? "white" : 'white'}
-        inactiveColor={darkTheme ? '#a69a9b' : 'black'}
-        barStyle={{ backgroundColor: darkTheme ? '#06103d' : '#327ba8' }}
+        activeColor={darkTheme ? "white" : '#327ba8'}
+        inactiveColor={darkTheme ? '#a69a9b' : 'grey'}
+        barStyle={{ backgroundColor: darkTheme ? '#1f1f1f' : 'white' }}
         shifting={false}
         >
             <Tab.Screen name='News' component={News} options={{

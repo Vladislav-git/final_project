@@ -1,11 +1,12 @@
 import React from 'react';
+import {Text, TouchableOpacity, TextInput, View, StyleSheet, Dimensions, Button} from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Login from '../components/Login'
 import Register from '../components/Register'
 import Messages from '../components/Messages'
 import Comments from '../components/Comments'
 import UserProfile from '../components/UserProfile'
-import {useC} from '../context/Context'
+import {useC, useUpdateC} from '../context/Context'
 import TabNavigation from './TabNavigation'
 
 
@@ -14,13 +15,22 @@ const Stack = createStackNavigator();
 const MainNavigation = () => {
 
     const {darkTheme}:any = useC();
+    const {toggleTheme}:any = useUpdateC();
 
     const options = {
         headerStyle: {
-            borderColor: 'gray',
-            backgroundColor: darkTheme ? '#06103d' : '#327ba8',
+            borderBottomColor: darkTheme ? 'lightgrey' : '#327ba8',
+            backgroundColor: darkTheme ? 'black' : 'white',
+            borderBottomWidth: 1,
         },
-        headerTintColor: 'white',
+        headerTintColor: darkTheme ? 'white' : 'black',
+        headerRight: () => (
+            <Button
+              onPress={() => toggleTheme()}
+              title="Theme"
+              color="black"
+            />
+        ),
     }
 
     return (

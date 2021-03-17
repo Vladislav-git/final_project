@@ -59,13 +59,14 @@ const ChatList = ({navigation}:any) => {
     // console.log(chats.filter((chat:any) => chatUsersInfo[0].chats.indexOf(chat) >= 0))
 
     return (
-        <View style={{flex: 1, height: '100%'}}>
-            <TouchableOpacity style={styles.Button} onPress={() => setIsVisible(true)}>
-                <Text>Add chat</Text>
+        <View style={{flex: 1, backgroundColor: darkTheme ? 'black' : 'white'}}>
+            <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? '#4a4a4a' :"#327ba8"}} onPress={() => setIsVisible(true)}>
+                <Text style={styles.ButtonText}>Add chat</Text>
             </TouchableOpacity>
             <TextInput
             placeholder='Search chat'
-            style={styles.Input}
+            placeholderTextColor={darkTheme ? 'white' : 'black'}
+            style={{...styles.Input, backgroundColor: darkTheme ? '#4a4a4a' : '#e3e3e3'}}
             />
             <ScrollView>
             {(chatUsersInfo.length !== 0)
@@ -87,7 +88,7 @@ const ChatList = ({navigation}:any) => {
                         }
                         style={styles.Image}
                         />
-                            <Text style={styles.Text}>{chatUser.firstname} {chatUser.secondname}</Text>
+                            <Text style={{...styles.Text, color: darkTheme ? 'white' : 'black'}}>{chatUser.firstname} {chatUser.secondname}</Text>
                         </TouchableOpacity>
                     </View>
                 ))
@@ -146,19 +147,19 @@ const ChatList = ({navigation}:any) => {
 const styles = StyleSheet.create({
     ChatListBox: {
         width: '100%',
-        height: Dimensions.get('screen').height - 600,
+        flex: 1,
         marginTop: '3%',
-        borderWidth: 1
+        // borderWidth: 1
     },
     ChatBox: {
         flexDirection: 'row',
         height: '100%'
     },
     Image: {
-        width: '15%',
-        height: '90%',
+        width: '17%',
+        height: 60,
         borderRadius: 10,
-        marginLeft: '2%'
+        marginLeft: '5%',
     },
     Text: {
         alignSelf: 'flex-start',
@@ -168,19 +169,28 @@ const styles = StyleSheet.create({
         marginTop: '1%'
     },
     Input: {
-        marginTop: '2%',
-        height: '7%',
-        width: '80%',
-        marginLeft: '10%',
+        alignSelf: 'center',
+        height: 40,
+        width: '90%',
+        borderColor: 'gray',
         borderWidth: 1,
-        borderRadius: 5
+        borderRadius: 5,
+        marginTop: '2%'
     },
     Button: {
+        borderRadius: 10,
+        height: 40,
+        width: '50%',
+        alignSelf: 'center',
+        justifyContent: 'center',
         marginTop: '2%',
-        height: '10%',
-        width: '20%',
-        backgroundColor: 'green',
-        alignSelf: 'center'
+        marginBottom: '3%'
+    },
+    ButtonText: {
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: 'bold',
+        alignSelf: 'center',
     },
     Modal: {
         marginTop: '10%',

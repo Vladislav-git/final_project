@@ -72,8 +72,6 @@ const Messages = () => {
         setIsVisible(false)
     }
 
-    console.log(message)
-
     return (
         <View style={{height: Dimensions.get('screen').height-130,}}>
             <View style={styles.ChatUser}>

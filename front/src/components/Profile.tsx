@@ -56,8 +56,6 @@ const Profile = ({navigation}:any) => {
         
     },[])
 
-    console.log(posts)
-
     const saveProfileData = () => {
         axios('http://10.0.2.2:8000/update-profile',{
                 method: 'put',
@@ -142,7 +140,6 @@ const Profile = ({navigation}:any) => {
 
 
     const changeLike = async (post:any, number:number) => {
-		console.log(post)
 		if (number === 0) {
 			post.like_number -= 1
 			post.who_liked = post.who_liked.filter((userId:any) => userId !== data.user._id)
@@ -151,7 +148,7 @@ const Profile = ({navigation}:any) => {
 				headers: {Authorization: 'Bearer ' + data.token},
 				data: post
 			})
-				.then(info => console.log(info.data))
+				.then(info => console.log('ok'))
 				.catch(err => alert(err))
 		} else {
 			post.like_number += 1
@@ -161,7 +158,7 @@ const Profile = ({navigation}:any) => {
 				headers: {Authorization: 'Bearer ' + data.token},
 				data: post
 			})
-				.then(info => console.log(info.data))
+				.then(info => console.log('ok'))
 				.catch(err => alert(err))
 		}
 	}
@@ -278,14 +275,14 @@ const Profile = ({navigation}:any) => {
                             :
                                 null
                             }
-                            <View>
+                            <View style={{flexDirection: 'row'}}>
                                 {post.who_liked.find((item:any) => item === data.user._id)
                                     ? <View style={{borderWidth: 1, flexDirection: 'row'}}>
                                         <TouchableOpacity onPress={() => changeLike(post, 0)}>
                                             <MaterialCommunityIcons
                                             name='heart'
                                             color={'red'}
-                                            size={26}
+                                            size={23}
                                             />
                                         </TouchableOpacity>
                                         <Text>{post.like_number}</Text>
@@ -295,14 +292,14 @@ const Profile = ({navigation}:any) => {
                                             <MaterialCommunityIcons
                                             name='heart'
                                             color={'#41454a'}
-                                            size={26}
+                                            size={23}
                                             />
                                         </TouchableOpacity>
                                         <Text>{post.like_number}</Text>
                                         <Text></Text>
                                     </View>
                                 }
-                                <TouchableOpacity onPress={() => {
+                                <TouchableOpacity style={{borderWidth: 1, flexDirection: 'row', height: 50}} onPress={() => {
                                     updateData({...data, post})
                                     navigation.navigate('Comments')
                                     
@@ -310,7 +307,7 @@ const Profile = ({navigation}:any) => {
                                     <MaterialCommunityIcons
                                     name='comment'
                                     color={'#41454a'}
-                                    size={26}
+                                    size={23}
                                     />
                                     <Text>{post.comment_number}</Text>
                                 </TouchableOpacity>
@@ -587,7 +584,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     Post: {
-        height: 200,
+        flex: 1,
         marginTop: '2%',
         borderWidth: 1,
         backgroundColor: 'white'
@@ -600,17 +597,16 @@ const styles = StyleSheet.create({
         marginTop: '2%'
     },
     PostImage: {
-        height: '40%',
-        width: '95%',
+        height: 200,
+        width: '100%',
         alignSelf: 'center',
         marginTop: '5%'
     },
     PostVideo: {
-        height: '80%',
-        width: '80%',
-        alignSelf: 'flex-start',
+        height: 200,
+        width: '100%',
+        alignSelf: 'center',
         marginLeft: '5%',
-        marginTop: '5%'
     },
     ProfileModalHeader: {
         alignSelf: 'center',

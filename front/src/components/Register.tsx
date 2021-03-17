@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, {useState} from 'react';
-import {Text, TouchableOpacity, TextInput, View, StyleSheet} from 'react-native';
+import {Text, TouchableOpacity, TextInput, View, StyleSheet, Dimensions} from 'react-native';
 import {registrationSchema} from '../validation/validation'
 import {useC} from '../context/Context'
 
@@ -49,34 +49,34 @@ const Register = ({navigation}:any) => {
 
     return (
         <View style={{...styles.MainView, backgroundColor: darkTheme ? 'black' : 'lightgrey'}}>
-            <View style={styles.FormContainer}>
-                <Text style={styles.Header}>My Project Register</Text>
-                <Text style={styles.Text}>Firstname:</Text>
+            <View style={{...styles.FormContainer, backgroundColor: darkTheme ? '#141414' : 'white'}}>
+                <Text style={{...styles.Header, color: darkTheme ? 'white' : 'black'}}>My Project Register</Text>
+                <Text style={{...styles.Text, color: darkTheme ? 'white' : 'black'}}>Firstname:</Text>
                 <TextInput
-                style={styles.Input}
+                style={{...styles.Input, color: darkTheme ? 'white' : 'black'}}
                 value={registrationModel.firstname}
                 onChangeText={(firstname) => setRegistrationModel({...registrationModel, firstname: firstname})}
                 />
-                <Text style={styles.Text}>Secondname:</Text>
+                <Text style={{...styles.Text, color: darkTheme ? 'white' : 'black'}}>Secondname:</Text>
                 <TextInput
-                style={styles.Input} 
+                style={{...styles.Input, color: darkTheme ? 'white' : 'black'}} 
                 value={registrationModel.secondname}
                 onChangeText={(secondname) => setRegistrationModel({...registrationModel, secondname: secondname})}
                 />
-                <Text style={styles.Text}>Email:</Text>
+                <Text style={{...styles.Text, color: darkTheme ? 'white' : 'black'}}>Email:</Text>
                 <TextInput
-                style={styles.Input} 
+                style={{...styles.Input, color: darkTheme ? 'white' : 'black'}} 
                 value={registrationModel.email}
                 onChangeText={(email) => setRegistrationModel({...registrationModel, email: email})}
                 />
-                <Text style={styles.Text}>Password:</Text>
+                <Text style={{...styles.Text, color: darkTheme ? 'white' : 'black'}}>Password:</Text>
                 <TextInput
-                style={styles.Input} 
+                style={{...styles.Input, color: darkTheme ? 'white' : 'black'}} 
                 value={registrationModel.password}
                 secureTextEntry
                 onChangeText={(password) => setRegistrationModel({...registrationModel, password: password})}
                 />
-                <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? 'orange' :"#327ba8"}} onPress={() => handleSubmit(registrationModel)}>
+                <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? '#4a4a4a' :"#327ba8"}} onPress={() => handleSubmit(registrationModel)}>
                     <Text style={styles.ButtonText}>Sign In</Text>
                 </TouchableOpacity>
             </View>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     },
     FormContainer: {
         width: '90%',
-        height: '90%',
+        height: '70%',
         marginTop: '10%',
         borderColor: 'gray',
         borderWidth: 1,
@@ -119,20 +119,21 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontWeight: "bold",
         alignSelf: "center",
+        
     },
     Header: {
         fontSize: 25,
         alignSelf: "center",
-        marginTop: '10%',
+        marginTop: '7%',
         fontWeight: 'bold',
     },
     MainView: {
-        height:'100%',
+        height: Dimensions.get('screen').height,
         width:'100%',
     },
     Text: {
         fontSize: 14,
-        marginTop: '10%',
+        marginTop: '7%',
         marginLeft: '23%'
     }
 })

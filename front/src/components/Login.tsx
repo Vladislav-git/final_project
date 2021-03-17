@@ -6,6 +6,7 @@ import {useC, useUpdateC} from '../context/Context'
 import * as Google from 'expo-google-app-auth';
 import {loginShema} from '../validation/validation'
 import firebase from 'firebase'
+import { StatusBar } from 'expo-status-bar';
 
 const initialLoginModel = {
     email: '',
@@ -80,31 +81,32 @@ const Login = ({navigation}:any) => {
 
     return (
         <View style={{...styles.MainView, backgroundColor: darkTheme ? 'black' : 'lightgrey'}}>
-            <View style={styles.FormContainer}>
-                <Text style={styles.Header}>My Project Login</Text>
-                <Text style={styles.Text}>Email:</Text>
+            <StatusBar style="light" />
+            <View style={{...styles.FormContainer, backgroundColor: darkTheme ? '#141414' : 'white'}}>
+                <Text style={{...styles.Header, color: darkTheme ? 'white' : 'black'}}>My Project Login</Text>
+                <Text style={{...styles.Text, color: darkTheme ? 'white' : 'black'}}>Email:</Text>
                 <TextInput
-                style={styles.Input}
+                style={{...styles.Input, color: darkTheme ? 'white' : 'black'}}
                 placeholderTextColor='grey'
                 value={loginModel.email}
                 onChangeText={(email) => setLoginModel({...loginModel, email: email})}
                 />
-                <Text style={styles.Text}>Password:</Text>
+                <Text style={{...styles.Text, color: darkTheme ? 'white' : 'black'}}>Password:</Text>
                 <TextInput
-                style={styles.Input}
+                style={{...styles.Input, color: darkTheme ? 'white' : 'black'}}
                 placeholderTextColor='grey'
                 value={loginModel.password}
                 secureTextEntry
                 onChangeText={(password) => setLoginModel({...loginModel, password: password})}
                 />
-                <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? 'orange' :"#327ba8"}} onPress={() => handleSubmit(loginModel)}>
+                <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? '#4a4a4a' :"#327ba8"}} onPress={() => handleSubmit(loginModel)}>
                     <Text style={styles.ButtonText}>Login</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? 'orange' :"#327ba8"}} onPress={() => navigation.navigate('Register')}>
+                <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? '#4a4a4a' :"#327ba8"}} onPress={() => navigation.navigate('Register')}>
                     <Text style={styles.ButtonText}>Register</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={{...styles.GoogleButton, backgroundColor: darkTheme ? 'orange' :"#0e4f0c"}}
+                    style={{...styles.GoogleButton, backgroundColor: darkTheme ? '#0e4f0c' :"#0e4f0c"}}
                     onPress={async () => handleGoogle()}
                 >
                     <Image
@@ -223,7 +225,7 @@ const styles = StyleSheet.create({
     },
     FormContainer: {
         width: '90%',
-        height: '90%',
+        height: '70%',
         marginTop: '10%',
         borderColor: 'gray',
         borderWidth: 1,
@@ -249,16 +251,16 @@ const styles = StyleSheet.create({
     Header: {
         fontSize: 25,
         alignSelf: "center",
-        marginTop: '15%',
+        marginTop: '7%',
         fontWeight: 'bold',
     },
     MainView: {
-        height:'100%',
+        height: Dimensions.get('screen').height,
         width:'100%',
     },
     Text: {
         fontSize: 14,
-        marginTop: '10%',
+        marginTop: '7%',
         marginLeft: '23%'
     },
     Error: {

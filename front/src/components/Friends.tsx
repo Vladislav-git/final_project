@@ -56,30 +56,31 @@ const Friends = () => {
             .then(resp => updateData({...data, user: resp.data}))
             .catch(err => alert(err))
     }
-    console.log(data)
+
     return (
 
         
-        <View style={{flex: 1}}>
-            <TouchableOpacity style={{width: '20%', height: '7%', backgroundColor: 'blue', alignSelf: 'center'}} onPress={() => setIsVisible(true)}>
-                <Text>Add friend</Text>
+        <View style={{flex: 1, backgroundColor: darkTheme ? 'black' : 'white'}}>
+            <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? '#4a4a4a' :"#327ba8"}} onPress={() => setIsVisible(true)}>
+                <Text style={styles.ButtonText}>Add friends</Text>
             </TouchableOpacity>
             <TextInput
             placeholder='Search'
-            style={styles.Input}
+            placeholderTextColor={darkTheme ? 'white' : '#4a4a4a'}
+            style={{...styles.Input, backgroundColor: darkTheme ? '#4a4a4a' : '#e3e3e3'}}
             />
             <Text style={{marginLeft: '5%', marginTop: '1%', fontSize: 20}}>My Friends</Text>
             <ScrollView style={{marginTop: '1%'}}>
                 {(friends.length !== 0)
                     ? friends.map((friend:any, index:number) => (
-                        <View style={styles.FriendContainer} key={index}>
+                        <View style={{...styles.FriendContainer, borderBottomWidth: 0}} key={index}>
                             <Image source={(friend.avatar !== '')
                                 ? {uri: friend.avatar}
                                 : require('../../assets/default_user.png')
                             }
-                            style={{width: '10%', height: '40%', marginTop: '1%', borderRadius:50}}
+                            style={{width: '12%', height: '80%', marginTop: '1%', borderRadius:50}}
                             />
-                            <Text style={{marginTop: '2%', marginLeft: '2%'}}>{friend.firstname} {friend.secondname}</Text>
+                            <Text style={{marginTop: '2%', marginLeft: '2%', color: darkTheme ? 'white' : 'black'}}>{friend.firstname} {friend.secondname}</Text>
                         </View>
                     ))
                     : <Text style={{marginLeft: '5%'}}>no friends</Text>
@@ -90,78 +91,48 @@ const Friends = () => {
             animationType='slide'
             transparent={true}
             >
-                <View style={styles.Modal}>
-                    <Text>111</Text>
+                <View style={{...styles.Modal, backgroundColor: darkTheme ? 'black' : 'white'}}>
+                    <Text style={{...styles.ModalText, color: darkTheme ? 'white' : 'black'}}>All users</Text>
                     <TextInput 
                     value={sort}
                     onChangeText={(text) => setSort(text)}
+                    style={{...styles.ModalSort, backgroundColor: darkTheme ? '#4a4a4a' : '#e3e3e3'}}
                     />
-                    <ScrollView>
+                    <ScrollView style={{marginTop: '3%'}}>
                     {(users.length !== 0)
                         ? users.map((user:any, index:any) => (
-                            <View key={index} style={styles.FriendContainer}>
+                            <View key={index} style={{...styles.FriendContainer, marginLeft: 0}}>
                                 <Image source={(user.avatar !== '')
                                     ? {uri: user.avatar}
                                     : require('../../assets/default_user.png')
                                 }
-                                style={{width: '10%', height: '40%', marginTop: '1%', borderRadius:50}}
+                                style={{width: '15%', height: '80%', marginTop: '1%', borderRadius: 50, marginLeft: '15%'}}
                                 />
-                                <Text style={{marginTop: '2%', marginLeft: '2%'}}>{user.firstname} {user.secondname}</Text>
+                                <Text style={{marginTop: '2%', marginLeft: '2%', width: '50%', color: darkTheme ? 'white' : 'black' }}>{user.firstname} {user.secondname}</Text>
                                 {data.user.friends.filter((friendId:any) => friendId === user._id)
-                                    ? <TouchableOpacity key={index} onPress={() => removeFriend(user._id)}>
+                                    ? <TouchableOpacity style={styles.AddRemFriend} key={index} onPress={() => removeFriend(user._id)}>
                                         <MaterialCommunityIcons
                                         style={{alignSelf: 'flex-end'}}
                                         name="account-remove"
-                                        color={'black'}
+                                        color={'#962020'}
                                         size={26}
                                         />
                                     </TouchableOpacity>
-                                    : <TouchableOpacity key={index} onPress={() => addFriend(user._id)}>
+                                    : <TouchableOpacity style={styles.AddRemFriend} key={index} onPress={() => addFriend(user._id)}>
                                         <MaterialCommunityIcons
                                         style={{alignSelf: 'flex-end'}}
                                         name="account-plus"
-                                        color={'black'}
+                                        color={'#27781e'}
                                         size={26}
                                         />
                                     </TouchableOpacity>
                                 }
-                                {/* {(data.user.friends.length === 0)
-                                    ? <TouchableOpacity key={index} onPress={() => addFriend(user._id)}>
-                                        <MaterialCommunityIcons
-                                        style={{alignSelf: 'flex-end'}}
-                                        name="account-plus"
-                                        color={'black'}
-                                        size={26}
-                                        />
-                                        <Text>{'1'}</Text>
-                                    </TouchableOpacity>
-                                    : data.user.friends.map((friendId:any, index:any) => (
-                                    (friendId.toString() === user._id.toString())
-                                        ? <TouchableOpacity key={index} onPress={() => removeFriend(user._id)}>
-                                            <MaterialCommunityIcons
-                                            style={{alignSelf: 'flex-end'}}
-                                            name="account-remove"
-                                            color={'black'}
-                                            size={26}
-                                            />
-                                            <Text>{friendId.toString() === user._id.toString()? 'true1':'false1'}</Text>
-                                        </TouchableOpacity>
-                                        : <TouchableOpacity key={index} onPress={() => addFriend(user._id)}>
-                                            <MaterialCommunityIcons
-                                            style={{alignSelf: 'flex-end'}}
-                                            name="account-plus"
-                                            color={'black'}
-                                            size={26}
-                                            />
-                                            <Text>{friendId.toString() === user._id.toString()? 'true2':'false2'}</Text>
-                                        </TouchableOpacity>
-                                ))} */}
                             </View>
                         ))
                         : <Text style={{marginLeft: '5%'}}>no users</Text>
                     }
                     </ScrollView>
-                    <TouchableOpacity style={styles.Button} onPress={() => setIsVisible(false)}>
+                    <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? '#4a4a4a' :"#327ba8"}} onPress={() => setIsVisible(false)}>
                         <Text style={styles.ButtonText}>Cancel</Text>
                     </TouchableOpacity>
                 </View>
@@ -174,8 +145,10 @@ const Friends = () => {
 const styles = StyleSheet.create({
     FriendContainer: {
         flexDirection: 'row',
-        height: 100,
-        marginLeft: '5%'
+        height: 50,
+        marginLeft: '5%',
+        borderBottomWidth: 1
+        // borderWidth: 1
     },
     Input: {
         alignSelf: 'center',
@@ -202,13 +175,34 @@ const styles = StyleSheet.create({
         width: '50%',
         alignSelf: 'center',
         justifyContent: 'center',
-        backgroundColor: 'lightgrey',
+        marginTop: '2%',
+        marginBottom: '3%'
     },
     ButtonText: {
+        color: "#fff",
         fontSize: 14,
-        color: '#006aff',
         fontWeight: 'bold',
         alignSelf: 'center',
+    },
+    ModalSort: {
+        alignSelf: 'center',
+        height: 40,
+        width: '90%',
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 5,
+        marginTop: '2%'
+    },
+    AddRemFriend: {
+        // marginLeft: '10%',
+        marginTop: '4%'
+    },
+    ModalText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        color: 'black',
+        marginTop: '2%'
     }
 })
 
