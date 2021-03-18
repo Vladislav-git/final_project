@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import {Text, View, Image, ScrollView, StyleSheet, TextInput, Modal, Dimensions, TouchableOpacity} from 'react-native'
 import {useC, useUpdateC} from '../context/Context'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { StatusBar } from 'expo-status-bar';
 
 
 const Friends = () => {
@@ -61,6 +62,7 @@ const Friends = () => {
 
         
         <View style={{flex: 1, backgroundColor: darkTheme ? 'black' : 'white'}}>
+            <StatusBar style={darkTheme ? "light" : 'dark'} />
             <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? '#4a4a4a' :"#327ba8"}} onPress={() => setIsVisible(true)}>
                 <Text style={styles.ButtonText}>Add friends</Text>
             </TouchableOpacity>
@@ -73,12 +75,12 @@ const Friends = () => {
             <ScrollView style={{marginTop: '1%'}}>
                 {(friends.length !== 0)
                     ? friends.map((friend:any, index:number) => (
-                        <View style={{...styles.FriendContainer, borderBottomWidth: 0}} key={index}>
+                        <View style={{...styles.FriendContainer, borderBottomWidth: 0, backgroundColor: darkTheme ? '#212121' : 'white'}} key={index}>
                             <Image source={(friend.avatar !== '')
                                 ? {uri: friend.avatar}
                                 : require('../../assets/default_user.png')
                             }
-                            style={{width: '12%', height: '80%', marginTop: '1%', borderRadius:50}}
+                            style={{width: '12%', height: '80%', marginTop: '1%', borderRadius: 50, marginLeft: '5%'}}
                             />
                             <Text style={{marginTop: '2%', marginLeft: '2%', color: darkTheme ? 'white' : 'black'}}>{friend.firstname} {friend.secondname}</Text>
                         </View>
@@ -91,7 +93,7 @@ const Friends = () => {
             animationType='slide'
             transparent={true}
             >
-                <View style={{...styles.Modal, backgroundColor: darkTheme ? 'black' : 'white'}}>
+                <View style={{...styles.Modal, backgroundColor: darkTheme ? 'black' : 'white', borderColor: darkTheme ? 'white' : 'black'}}>
                     <Text style={{...styles.ModalText, color: darkTheme ? 'white' : 'black'}}>All users</Text>
                     <TextInput 
                     value={sort}
@@ -101,12 +103,12 @@ const Friends = () => {
                     <ScrollView style={{marginTop: '3%'}}>
                     {(users.length !== 0)
                         ? users.map((user:any, index:any) => (
-                            <View key={index} style={{...styles.FriendContainer, marginLeft: 0}}>
+                            <View key={index} style={{...styles.FriendContainer, marginLeft: 0, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                                 <Image source={(user.avatar !== '')
                                     ? {uri: user.avatar}
                                     : require('../../assets/default_user.png')
                                 }
-                                style={{width: '15%', height: '80%', marginTop: '1%', borderRadius: 50, marginLeft: '15%'}}
+                                style={{width: '15%', height: '80%', marginTop: '1%', borderRadius: 50, marginLeft: '10%'}}
                                 />
                                 <Text style={{marginTop: '2%', marginLeft: '2%', width: '50%', color: darkTheme ? 'white' : 'black' }}>{user.firstname} {user.secondname}</Text>
                                 {data.user.friends.filter((friendId:any) => friendId === user._id)
@@ -146,8 +148,9 @@ const styles = StyleSheet.create({
     FriendContainer: {
         flexDirection: 'row',
         height: 50,
-        marginLeft: '5%',
-        borderBottomWidth: 1
+        width: '100%',
+        borderBottomWidth: 1,
+        marginTop: '3%'
         // borderWidth: 1
     },
     Input: {

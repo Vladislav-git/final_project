@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import {Text, TextInput, View, TouchableOpacity, ScrollView, Image, StyleSheet, Dimensions, Modal} from 'react-native'
+import {Text, TextInput, View, TouchableOpacity, ScrollView, Image, StyleSheet, Dimensions, Modal, ImageBackground} from 'react-native'
 import {io} from 'socket.io-client'
 import {useC, useUpdateC} from '../context/Context'
 import * as ImagePicker from 'expo-image-picker';
 import { Video } from 'expo-av';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { StatusBar } from 'expo-status-bar';
 
 const Messages = () => {
 
@@ -73,8 +74,9 @@ const Messages = () => {
     }
 
     return (
-        <View style={{height: Dimensions.get('screen').height-130,}}>
-            <View style={styles.ChatUser}>
+        <View style={{flex: 1, backgroundColor: darkTheme ? 'black' : 'white'}}>
+            <StatusBar style={darkTheme ? "light" : 'dark'} />
+            <View style={{...styles.ChatUser, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                 <Image
                 source={(chatUserInfo.avatar !== '')
                 ? {uri: chatUserInfo.avatar}
@@ -82,32 +84,32 @@ const Messages = () => {
                 }
                 style={styles.Image}
                 />
-                <Text style={styles.Text}>{chatUserInfo.firstname} {chatUserInfo.secondname}</Text>
+                <Text style={{...styles.Text, color: darkTheme ? 'white' : 'black'}}>{chatUserInfo.firstname} {chatUserInfo.secondname}</Text>
             </View>
-            <ScrollView style={styles.Messages}>
+            <ScrollView style={{...styles.Messages, borderTopColor: darkTheme ? 'grey' : 'black', borderBottomColor: darkTheme ? 'grey' : 'black'}}>
                 {(allMessages.length !== 0)
                     ? allMessages.map((userMessage:any, index) => (
                         (userMessage.user_id === data.user._id)
-                            ? <View key={index} style={styles.MessageTextBox}>
-                                <Text style={styles.UserMessageText}>{userMessage.message_text}</Text>
+                            ? <View key={index} style={{...styles.MessageTextBox, backgroundColor: darkTheme ? '#787878' : '#b8d3ff'}}>
+                                <Text style={{...styles.UserMessageText, color: darkTheme ? 'white' : 'black'}}>{userMessage.message_text}</Text>
                                 {userMessage.message_video === ''
                                     ? null
-                                    : <Video source={{uri: userMessage.message_video}} style={{height:120, width: 150, marginLeft: '50%'}} />
+                                    : <Video source={{uri: userMessage.message_video}} style={{height:120, width: '95%', alignSelf: 'center', marginTop: '3%', marginBottom: '3%'}} />
                                 }
                                 {userMessage.message_img === ''
                                     ? null
-                                    : <Image source={{uri: userMessage.message_img}} style={{height:120, width: 150, marginLeft: '50%'}} />
+                                    : <Image source={{uri: userMessage.message_img}} style={{height:120, width: '95%', alignSelf: 'center', marginTop: '3%', marginBottom: '3%'}} />
                                 }
                             </View>
-                            : <View key={index} style={styles.MessageTextBox}>
-                                <Text style={styles.ChatUserMessageText}>{userMessage.message_text}</Text>
+                            : <View key={index} style={{...styles.MessageTextBox, backgroundColor: darkTheme ? '#424242' : 'lightgrey'}}>
+                                <Text style={{...styles.ChatUserMessageText, color: darkTheme ? 'white' : 'black'}}>{userMessage.message_text}</Text>
                                 {userMessage.message_video === ''
                                     ? null
-                                    : <Video source={{uri: userMessage.message_video}} style={{height:120, width: 150}} />
+                                    : <Video source={{uri: userMessage.message_video}} style={{height:120, width: '95%', alignSelf: 'center', marginTop: '3%', marginBottom: '3%'}} />
                                 }
                                 {userMessage.message_img === ''
                                     ? null
-                                    : <Image source={{uri: userMessage.message_img}} style={{height:120, width: 150}} />
+                                    : <Image source={{uri: userMessage.message_img}} style={{height:120, width: '95%', alignSelf: 'center', marginTop: '3%', marginBottom: '3%'}} />
                                 }
                             </View>
                         
@@ -118,52 +120,56 @@ const Messages = () => {
             
             {message.message_video === ''
                 ? null
-                : <Video source={{uri: message.message_video}} style={{height:50, width: 50}} />
+                : <View style={{backgroundColor: darkTheme ? '#212121' : 'white', borderBottomWidth: 1, borderBottomColor: darkTheme ? 'black' : 'grey'}}>
+                    <Video source={{uri: message.message_video}} style={{height:70, width: 80, marginTop: '2%', marginBottom: '2%', marginLeft: '4%'}} />
+                    <TouchableOpacity style={{position: 'absolute', bottom: '65%', left: '20.5%'}} onPress={() => Cancel()}>
+                        <MaterialCommunityIcons name="close-circle" color={'grey'} size={20} />
+                    </TouchableOpacity>
+                </View>
             }
             {message.message_img === ''
                 ? null
-                : <Image source={{uri: message.message_img}} style={{height:50, width: 50}} />
+                : <View style={{backgroundColor: darkTheme ? '#212121' : 'white', borderBottomWidth: 1, borderBottomColor: darkTheme ? 'black' : 'grey'}}>
+                    <ImageBackground source={{uri: message.message_img}} style={{height:70, width: 80, marginTop: '2%', marginBottom: '2%', marginLeft: '4%'}}>
+                        <TouchableOpacity style={{position: 'absolute', bottom: '68%', left: '74%'}} onPress={() => Cancel()}>
+                            <MaterialCommunityIcons name="close-circle" color={'grey'} size={20} />
+                        </TouchableOpacity>
+                    </ImageBackground>
+                </View>
             }
             
-            <View style={styles.Box}>
+            <View style={{...styles.Box, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                 <TouchableOpacity style={styles.Button} onPress={() => setIsVisible(true)}>
-                    <MaterialCommunityIcons style={{alignSelf: 'center'}} name="paperclip" color={'lightblue'} size={26} />
+                    <MaterialCommunityIcons style={{alignSelf: 'center'}} name="paperclip" color={'lightgrey'} size={26} />
                 </TouchableOpacity>
                 <TextInput
-                style={styles.Input}
-                placeholder='Message'
+                style={{...styles.Input, color: darkTheme ? 'white' : 'black'}}
+                placeholder=' Message'
+                placeholderTextColor={darkTheme ? 'lightgrey' : 'grey'}
                 value={message.message_text}
                 onChangeText={(messageText) => setMessage({...message, message_text: messageText})}
                 />
                 <TouchableOpacity style={styles.Button} onPress={() => sendMessage()}>
-                    <MaterialCommunityIcons style={{alignSelf: 'center'}} name="send" color={'lightblue'} size={26} />
+                    <MaterialCommunityIcons style={{alignSelf: 'center'}} name="send" color={'#7aadff'} size={26} />
                 </TouchableOpacity>
             </View>
             <Modal
             visible={isVisible}
             animationType='slide'
             transparent={true}
+            onRequestClose={() => Cancel()}
             >
-                <View style={styles.Modal}>
-                    <TouchableOpacity onPress={() => getPhoto()}>
-                        <MaterialCommunityIcons style={{alignSelf: 'center'}} name="image" color={'lightblue'} size={26} />
-                        <Text>Add Image</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => getVideo()}>
-                        <MaterialCommunityIcons style={{alignSelf: 'center'}} name="video-box" color={'lightblue'} size={26} />
-                        <Text>Add Video</Text>
-                    </TouchableOpacity>
-                    {message.message_video === ''
-                        ? null
-                        : <Video source={{uri: message.message_video}} />
-                    }
-                    {message.message_img === ''
-                        ? null
-                        : <Image source={{uri: message.message_img}} />
-                    }
-                    <TouchableOpacity style={styles.Button} onPress={() => Cancel()}>
-                        <Text>Cancel</Text>
-                    </TouchableOpacity>
+                <View style={{...styles.Modal, backgroundColor: darkTheme ? 'black' : 'white'}}>
+                    <View style={{flexDirection: 'row', borderTopWidth:1, borderTopColor: darkTheme ? 'grey' : 'lightgrey'}}>
+                        <TouchableOpacity style={{...styles.Button, height: '100%',width: '50%', marginLeft: 0, borderRightWidth: 1, borderRightColor: darkTheme ? 'grey' : 'lightgrey', flexDirection: 'row'}} onPress={() => getPhoto()}>
+                            <MaterialCommunityIcons style={{alignSelf: 'center'}} name="image" color={'#7aadff'} size={26} />
+                            <Text style={{alignSelf: 'center', color: '#7aadff'}}>Photo</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{...styles.Button, height: '100%',width: '50%', marginLeft: 0, flexDirection: 'row'}} onPress={() => getVideo()}>
+                            <MaterialCommunityIcons style={{alignSelf: 'center'}} name="video-box" color={'#7aadff'} size={26} />
+                            <Text style={{alignSelf: 'center', color: '#7aadff'}}>Video</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </Modal>
             
@@ -176,36 +182,35 @@ const Messages = () => {
 
 const styles = StyleSheet.create({
     Modal: {
-        marginTop: '10%',
-        height: Dimensions.get('screen').height - 200,
-        width: '80%',
-        borderWidth: 1,
-        borderRadius: 20,
+        marginTop: Dimensions.get('screen').height*0.73,
+        // flex: 1,
+        height: 50,
+        width: '100%',
         color: 'grey',
         alignSelf: 'center',
         backgroundColor: 'white',
     },
     Image: {
-        width: '1%',
-        height: '90%',
+        width: '10%',
+        height: '70%',
         borderRadius: 50,
-        marginLeft: '35%'
+        marginLeft: '35%',
+        marginTop: '1%',
+        // marginBottom: '1%'
     },
     ChatUser: {
         width: '100%',
-        height: '7%',
-        borderWidth: 1,
-        marginTop: '2%',
+        height: '9%',
         flexDirection: 'row',
     },
     Text: {
-        fontSize: 16
+        fontSize: 16,
+        marginLeft: '2%'
     },
     Input: {
         height: '70%',
         width: '70%',
         borderRadius: 5,
-        borderWidth: 1,
         marginLeft: '2%',
         marginTop: '2%'
     },
@@ -213,42 +218,35 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         height: '10%',
         width: '100%',
-        marginTop: '1%',
-        borderWidth: 1
     },
     Button: {
         marginLeft: '2%',
-        height: '70%',
+        height: 40,
         width: '10%',
-        borderWidth: 1,
         marginTop: '2%',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     Messages: {
         height: '80%',
-        borderWidth: 1,
-        marginTop: '1%'
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
     },
     MessageTextBox: {
-        borderWidth: 1
+        flex: 1,
+        width: '70%',
+        borderRadius: 10,
+        alignSelf: 'flex-end',
+        marginTop: '3%'
     },
     ChatUserMessageText: {
-        borderWidth: 1,
-        minWidth: '30%',
-        maxWidth: '50%',
-        borderRadius: 10,
         textAlign: 'auto',
-        marginLeft: '2%',
-        marginTop: '1%'
+        marginLeft: '3%',
+        marginTop: '2%'
     },
     UserMessageText: {
-        borderWidth: 1,
-        minWidth: '30%',
-        maxWidth: '50%',
-        borderRadius: 10,
-        textAlign: 'auto',
-        marginLeft: '50%',
-        marginTop: '1%'
+        textAlign: 'left',
+        marginLeft: '3%',
+        marginTop: '2%'
     }
 })
 

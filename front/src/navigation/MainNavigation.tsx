@@ -19,7 +19,7 @@ const MainNavigation = () => {
 
     const options = {
         headerStyle: {
-            borderBottomColor: darkTheme ? 'lightgrey' : '#327ba8',
+            borderBottomColor: darkTheme ? 'grey' : 'black',
             backgroundColor: darkTheme ? 'black' : 'white',
             borderBottomWidth: 1,
         },

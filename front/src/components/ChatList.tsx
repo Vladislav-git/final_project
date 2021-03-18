@@ -3,6 +3,7 @@ import {Text, TouchableOpacity, Modal, ScrollView, View, Image, TextInput, Style
 import axios from 'axios';
 import {useC, useUpdateC} from '../context/Context'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { StatusBar } from 'expo-status-bar';
 
 
 const ChatList = ({navigation}:any) => {
@@ -60,6 +61,7 @@ const ChatList = ({navigation}:any) => {
 
     return (
         <View style={{flex: 1, backgroundColor: darkTheme ? 'black' : 'white'}}>
+            <StatusBar style={darkTheme ? "light" : 'dark'} />
             <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? '#4a4a4a' :"#327ba8"}} onPress={() => setIsVisible(true)}>
                 <Text style={styles.ButtonText}>Add chat</Text>
             </TouchableOpacity>
@@ -71,7 +73,7 @@ const ChatList = ({navigation}:any) => {
             <ScrollView>
             {(chatUsersInfo.length !== 0)
                 ? chatUsersInfo.map((chatUser:any, index:number) => (
-                    <View key={index} style={styles.ChatListBox}>
+                    <View key={index} style={{...styles.ChatListBox, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                         <TouchableOpacity
                         style={styles.ChatBox}
                         activeOpacity={1}
@@ -149,24 +151,25 @@ const styles = StyleSheet.create({
         width: '100%',
         flex: 1,
         marginTop: '3%',
-        // borderWidth: 1
     },
     ChatBox: {
         flexDirection: 'row',
-        height: '100%'
+        height: '100%',
     },
     Image: {
-        width: '17%',
-        height: 60,
-        borderRadius: 10,
+        width: '15%',
+        height: 50,
+        borderRadius: 50,
         marginLeft: '5%',
+        marginTop: '2%',
+        marginBottom: '2%'
     },
     Text: {
         alignSelf: 'flex-start',
         fontSize: 16,
         // borderWidth: 1,
         marginLeft: '2%',
-        marginTop: '1%'
+        marginTop: '3%'
     },
     Input: {
         alignSelf: 'center',

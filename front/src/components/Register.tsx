@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import {Text, TouchableOpacity, TextInput, View, StyleSheet, Dimensions} from 'react-native';
 import {registrationSchema} from '../validation/validation'
 import {useC} from '../context/Context'
+import { StatusBar } from 'expo-status-bar';
 
 const bcrypt = require('react-native-bcrypt');
 
@@ -49,6 +50,7 @@ const Register = ({navigation}:any) => {
 
     return (
         <View style={{...styles.MainView, backgroundColor: darkTheme ? 'black' : 'lightgrey'}}>
+            <StatusBar style={darkTheme ? "light" : 'dark'} />
             <View style={{...styles.FormContainer, backgroundColor: darkTheme ? '#141414' : 'white'}}>
                 <Text style={{...styles.Header, color: darkTheme ? 'white' : 'black'}}>My Project Register</Text>
                 <Text style={{...styles.Text, color: darkTheme ? 'white' : 'black'}}>Firstname:</Text>

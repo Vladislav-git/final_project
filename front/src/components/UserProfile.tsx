@@ -4,6 +4,7 @@ import {Text, View, Image, ScrollView, StyleSheet, TextInput, Modal, Dimensions,
 import {useC, useUpdateC} from '../context/Context'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Video } from 'expo-av';
+import { StatusBar } from 'expo-status-bar';
 
 const UserProfile = ({navigation}:any) => {
 
@@ -87,6 +88,7 @@ const UserProfile = ({navigation}:any) => {
 
     return (
         <SafeAreaView style={styles.container}>
+            <StatusBar style={darkTheme ? "light" : 'dark'} />
             <ScrollView style={styles.scrollView}>
                 <View style={styles.PreProfile}>
                     <Image

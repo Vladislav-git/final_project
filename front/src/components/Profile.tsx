@@ -7,6 +7,7 @@ import {Picker} from '@react-native-picker/picker';
 import { Video } from 'expo-av';
 // import { Camera } from 'expo-camera'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { StatusBar } from 'expo-status-bar';
 
 const Profile = ({navigation}:any) => {
     const {darkTheme, data}:any = useC();
@@ -169,8 +170,9 @@ const Profile = ({navigation}:any) => {
     
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView style={styles.scrollView}>
-                <View style={styles.PreProfile}>
+            <StatusBar style={darkTheme ? "light" : 'dark'} />
+            <ScrollView style={{backgroundColor: darkTheme ? 'black' : 'lightgrey'}}>
+                <View style={{...styles.PreProfile, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                     <Image
                     source={(data.user.avatar !== '')
                         ? {uri : data.user.avatar}
@@ -178,69 +180,70 @@ const Profile = ({navigation}:any) => {
                     }
                     style={styles.MainProfileImage}
                     />
-                    <Text style={{fontSize: 25, marginLeft: '5%', marginTop: '5%'}}>
+                    <Text style={{fontSize: 25, marginLeft: '5%', marginTop: '5%', color: darkTheme ? 'white' : 'black'}}>
                         {data.user.firstname} {data.user.secondname}
                     </Text>
                 </View>
-                <View style={{borderBottomWidth: 1, backgroundColor: 'white'}}>
+                <View style={{borderBottomWidth: 1, borderBottomColor: darkTheme ? 'grey' : 'lightgrey', backgroundColor: darkTheme ? '#212121' : 'white'}}>
                     <TouchableOpacity
-                    style={{...styles.Button, marginBottom: '2%', marginTop: '1%', width: '90%'}}
+                    style={{...styles.Button, marginBottom: '2%', marginTop: '1%', width: '90%', backgroundColor: darkTheme ? '#4a4a4a' :"lightgrey"}}
                     onPress={() => setProfileModalIsVisible(true)}
                     >
-                        <Text style={styles.ButtonText}>Edit</Text>
+                        <Text style={{...styles.ButtonText, color: darkTheme ? '#fff' : '#006aff'}}>Edit</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.Profile}>
+                <View style={{...styles.Profile, borderBottomWidth: 0, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                     <View style={{width: '10%', marginTop: '2%', marginBottom: '2%'}}>
                         <MaterialCommunityIcons
                         name='cake'
-                        color={'#41454a'}
+                        color={darkTheme ? '#787878' : '#41454a'}
                         size={26}
                         style={{alignSelf:'flex-end'}}
                         />
                         <MaterialCommunityIcons
                         name='city'
-                        color={'#41454a'}
+                        color={darkTheme ? '#787878' : '#41454a'}
                         size={26}
                         style={{alignSelf:'flex-end'}}
                         />
                         <MaterialCommunityIcons
                         name='phone'
-                        color={'#41454a'}
+                        color={darkTheme ? '#787878' : '#41454a'}
                         size={26}
                         style={{alignSelf:'flex-end'}}
                         />
                     </View>
                     <View style={{marginTop: '2%', marginBottom: '2%'}}>
-                        <Text style={styles.ProfileText}>
+                        <Text style={{...styles.ProfileText, color: darkTheme ? '#787878' : '#41454a'}}>
                             Birth date: {data.user.profile.birth_date}
                         </Text>
-                        <Text style={styles.ProfileText}>
+                        <Text style={{...styles.ProfileText, color: darkTheme ? '#787878' : '#41454a'}}>
                             City: {data.user.profile.city}
                         </Text>
-                        <Text style={styles.ProfileText}>
+                        <Text style={{...styles.ProfileText, color: darkTheme ? '#787878' : '#41454a'}}>
                             Phone number: {data.user.profile.phone_number}
                         </Text>
                     </View>
                 </View>
-                <View style={styles.AnythingNewBlock}>
+                <View style={{...styles.AnythingNewBlock, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                     <TextInput
                     style={{
                     alignSelf: 'center',
                     width: '60%',
                     marginTop: 0,
                     borderWidth: 0,
-                    backgroundColor: '#ebe8e8',
+                    backgroundColor: darkTheme ? '#454545' : '#ebe8e8',
                     borderRadius: 5
                     }}
                     placeholder='  Anything new?'
+                    placeholderTextColor={darkTheme? 'white' : 'grey'}
                     onFocus={() => setPostModalIsVisible(true)}
                     />
                 </View>
                 {(posts.length !== 0)
                 ?
                     posts.map((post:any, index:any) => (
-                        <View key={index} style={styles.Post}>
+                        <View key={index} style={{...styles.Post, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                             <View key={index} style={{flexDirection: 'row'}}>
                                 <Image
                                 source={(data.user.avatar !== '')
@@ -249,12 +252,12 @@ const Profile = ({navigation}:any) => {
                                 }
                                 style={styles.UserImage}
                                 />
-                                <Text style={{marginLeft: '3%', marginTop: '4%'}}>
+                                <Text style={{marginLeft: '3%', marginTop: '4%', color: darkTheme ? 'white' : 'black'}}>
                                     {data.user.firstname} {data.user.secondname}
                                 </Text>
                             </View>
                             
-                            <Text style={{marginLeft: '7%', marginTop: '4%'}}>
+                            <Text style={{marginLeft: '7%', marginTop: '4%', color: darkTheme ? 'white' : 'black'}}>
                                 {post.post_text}
                             </Text>
                             {(post.post_img !== '')
@@ -275,41 +278,38 @@ const Profile = ({navigation}:any) => {
                             :
                                 null
                             }
-                            <View style={{flexDirection: 'row'}}>
+                            <View style={{flexDirection: 'row', height: 40,}}>
                                 {post.who_liked.find((item:any) => item === data.user._id)
-                                    ? <View style={{borderWidth: 1, flexDirection: 'row'}}>
-                                        <TouchableOpacity onPress={() => changeLike(post, 0)}>
+                                    ? 
+                                        <TouchableOpacity style={{marginTop: '2.5%', height: 50,flexDirection: 'row', marginLeft: '5%'}} onPress={() => changeLike(post, 0)}>
                                             <MaterialCommunityIcons
                                             name='heart'
                                             color={'red'}
                                             size={23}
                                             />
+                                            <Text style={{color: darkTheme ? '#787878' : '#41454a', marginTop: '5%'}}>{post.like_number}</Text>
                                         </TouchableOpacity>
-                                        <Text>{post.like_number}</Text>
-                                    </View>
-                                    : <View style={{borderWidth: 1, flexDirection: 'row', height: 50}}>
-                                        <TouchableOpacity onPress={() => changeLike(post, 1)}>
+                                    : 
+                                        <TouchableOpacity style={{marginTop: '2.5%', height: 50, flexDirection: 'row', marginLeft: '5%'}} onPress={() => changeLike(post, 1)}>
                                             <MaterialCommunityIcons
                                             name='heart'
-                                            color={'#41454a'}
+                                            color={darkTheme ? '#787878' : '#41454a'}
                                             size={23}
                                             />
+                                            <Text style={{color: darkTheme ? '#787878' : '#41454a', marginTop: '5%'}}>{post.like_number}</Text>
                                         </TouchableOpacity>
-                                        <Text>{post.like_number}</Text>
-                                        <Text></Text>
-                                    </View>
                                 }
-                                <TouchableOpacity style={{borderWidth: 1, flexDirection: 'row', height: 50}} onPress={() => {
+                                <TouchableOpacity style={{flexDirection: 'row', height: 50, marginTop: '2.5%', marginLeft: '10%'}} onPress={() => {
                                     updateData({...data, post})
                                     navigation.navigate('Comments')
                                     
                                 }}>
                                     <MaterialCommunityIcons
                                     name='comment'
-                                    color={'#41454a'}
+                                    color={darkTheme ? '#787878' : '#41454a'}
                                     size={23}
                                     />
-                                    <Text>{post.comment_number}</Text>
+                                    <Text style={{color: darkTheme ? '#787878' : '#41454a', marginTop: '5%'}}>{post.comment_number}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -326,68 +326,69 @@ const Profile = ({navigation}:any) => {
             animationType='slide'
             transparent={true}
             >
-                <View style={styles.Modal}>
-                    <Text style={styles.ProfileModalHeader}>Your Profile</Text>
+                <View style={{...styles.Modal, backgroundColor: darkTheme ? '#212121' : 'white', borderColor: darkTheme ? 'white' : 'black'}}>
+                    <Text style={{...styles.ProfileModalHeader, color: darkTheme ? 'white' : 'black'}}>Your Profile</Text>
                     <View style={styles.InputContainer}>
                         <View style={{width: '40%', alignItems: 'flex-end'}}>
-                            <Text style={{...styles.InputHeader, marginTop: '4%'}}>Firstname: </Text>
-                            <Text style={styles.InputHeader}>Secondname: </Text>
-                            <Text style={styles.InputHeader}>Birth date: </Text>
-                            <Text style={styles.InputHeader}>City: </Text>
-                            <Text style={styles.InputHeader}>Phone number: </Text>
-                            <Text style={styles.InputHeader}>Gender: </Text>
+                            <Text style={{...styles.InputHeader, marginTop: '6%', color: darkTheme ? 'white' : 'black'}}>Firstname: </Text>
+                            <Text style={{...styles.InputHeader, marginTop: '18%',color: darkTheme ? 'white' : 'black'}}>Secondname: </Text>
+                            <Text style={{...styles.InputHeader, marginTop: '18%',color: darkTheme ? 'white' : 'black'}}>Birth date: </Text>
+                            <Text style={{...styles.InputHeader, marginTop: '18%',color: darkTheme ? 'white' : 'black'}}>City: </Text>
+                            <Text style={{...styles.InputHeader, marginTop: '18%',color: darkTheme ? 'white' : 'black'}}>Phone number: </Text>
+                            <Text style={{...styles.InputHeader, marginTop: '18%',color: darkTheme ? 'white' : 'black'}}>Gender: </Text>
                         </View>
                         <View style={{width: '70%',}}>
                             <TextInput
                             disableFullscreenUI={false}
                             value={profile.firstname}
                             onChangeText={(firstname) => setProfile({...profile, firstname})}
-                            style={{...styles.Input, marginTop: '1%'}}
+                            style={{...styles.Input, marginTop: '1%', color: darkTheme ? 'white' : 'black'}}
                             />
                             <TextInput
                             value={profile.secondname}
                             onChangeText={(secondname) => setProfile({...profile, secondname})}
-                            style={styles.Input}
+                            style={{...styles.Input, color: darkTheme ? 'white' : 'black'}}
                             />
                             <TextInput
                             value={profile.profile.birth_date}
                             onChangeText={(birth_date) => setProfile({...profile, profile: {...profile.profile, birth_date}})}
-                            style={styles.Input}
+                            style={{...styles.Input, color: darkTheme ? 'white' : 'black'}}
                             />
                             <TextInput
                             value={profile.profile.city}
                             onChangeText={(city) => setProfile({...profile, profile: {...profile.profile, city}})}
-                            style={styles.Input}
+                            style={{...styles.Input, color: darkTheme ? 'white' : 'black'}}
                             />
                             <TextInput
                             value={profile.profile.phone_number}
                             onChangeText={(phone_number) => setProfile({...profile, profile: {...profile.profile, phone_number}})}
-                            style={styles.Input}
+                            style={{...styles.Input, color: darkTheme ? 'white' : 'black'}}
                             />
                             <Picker
                             selectedValue={profile.profile.gender}
-                            style={styles.Picker}
+                            itemStyle={{backgroundColor: darkTheme ? 'black' : 'white', color: darkTheme ? 'white' : 'white'}}
+                            style={{...styles.Picker, color: darkTheme ? 'white' : 'black'}}
                             onValueChange={(gender) => setProfile({...profile, profile: {...profile.profile, gender}})}>
                                 <Picker.Item label='Male' value='male'/>
                                 <Picker.Item label='Female' value='female'/>
                             </Picker>
                         </View>
                     </View>
-                    <View style={{width: '100%', height: '25%'}}>
+                    <View style={{width: '100%', height: '12.5%', marginTop: '20%'}}>
                         <Image
                         source={(profile.avatar !== '')
                             ? {uri: profile.avatar}
                             : require('../../assets/default_user.png')
                         }
-                        style={{height: '100%', width: '30%', alignSelf: 'center'}}
+                        style={{height: '100%', width: '20%', alignSelf: 'center', borderRadius: 10}}
                         />
                     </View>
                     <View>
                         <TouchableOpacity
                         onPress={() => changeAvatar()}
-                        style={{...styles.Button, marginTop: '5%'}}
+                        style={{...styles.Button, marginTop: '5%', height: 35, backgroundColor: darkTheme ? '#4a4a4a' :"lightgrey"}}
                         >
-                            <Text style={styles.ButtonText}>
+                            <Text style={{...styles.ButtonText, color: darkTheme ? '#fff' : '#006aff'}}>
                                 Change profile avatar
                             </Text>
                         </TouchableOpacity>
@@ -395,17 +396,17 @@ const Profile = ({navigation}:any) => {
                     <View style={styles.ProfileModalButtonsContainer}>
                         <TouchableOpacity
                         onPress={() => saveProfileData()}
-                        style={{...styles.Button, width: '25%', marginLeft: '24.5%'}}
+                        style={{...styles.Button, width: '25%', marginLeft: '24.5%', height: 35, backgroundColor: darkTheme ? '#4a4a4a' :"lightgrey"}}
                         >
-                            <Text style={styles.ButtonText}>
+                            <Text style={{...styles.ButtonText, color: darkTheme ? '#fff' : '#006aff'}}>
                                 Save
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
                         onPress={() => cancelProfileChange()}
-                        style={{...styles.Button, width: '25%', marginLeft: '2%'}}
+                        style={{...styles.Button, width: '25%', marginLeft: '2%', height: 35, backgroundColor: darkTheme ? '#4a4a4a' :"lightgrey"}}
                         >
-                            <Text style={styles.ButtonText}>
+                            <Text style={{...styles.ButtonText, color: darkTheme ? '#fff' : '#006aff'}}>
                                 Cancel
                             </Text>
                         </TouchableOpacity>
@@ -418,11 +419,12 @@ const Profile = ({navigation}:any) => {
             animationType='slide'
             transparent={true}
             >
-                <View style={styles.Modal}>
-                    <Text style={styles.PostModalHeader}>Add new post</Text>
+                <View style={{...styles.Modal, backgroundColor: darkTheme ? '#212121' : 'white', borderColor: darkTheme ? 'white' : 'black'}}>
+                    <Text style={{...styles.PostModalHeader, color: darkTheme ? 'white' : 'black'}}>Add new post</Text>
                     <TextInput
-                    style={{...styles.Input, alignSelf: 'center', borderWidth: 0}}
+                    style={{...styles.Input, alignSelf: 'center', borderWidth: 1, color: darkTheme ? 'white' : 'lightgrey'}}
                     placeholder='Anything new?'
+                    placeholderTextColor={darkTheme ? 'white' : 'lightgrey'}
                     value={newPost.post_text}
                     onChangeText={(post_text):any => setNewPost({...newPost, post_text})}
                     />
@@ -456,7 +458,7 @@ const Profile = ({navigation}:any) => {
                         >
                             <MaterialCommunityIcons
                             name='file-image'
-                            color={'#41454a'}
+                            color={darkTheme ? '#787878' : '#41454a'}
                             size={26}
                             style={{alignSelf:'flex-end'}}
                             />
@@ -467,26 +469,26 @@ const Profile = ({navigation}:any) => {
                         >
                             <MaterialCommunityIcons
                             name='file-video'
-                            color={'#41454a'}
+                            color={darkTheme ? '#787878' : '#41454a'}
                             size={26}
                             style={{alignSelf:'flex-end'}}
                             />
                         </TouchableOpacity>
                     </View>
-                    <View style={{flexDirection: 'row', width: '100%', marginTop: '3%'}}>
+                    <View style={{flexDirection: 'row', width: '100%', marginTop: '8%'}}>
                         <TouchableOpacity
-                        style={{...styles.Button, width: '30%', marginLeft: '18%'}}
+                        style={{...styles.Button, width: '30%', marginLeft: '18%', backgroundColor: darkTheme ? '#4a4a4a' :"lightgrey"}}
                         onPress={() => savePostData()}
                         >
-                            <Text style={styles.ButtonText}>
+                            <Text style={{...styles.ButtonText, color: darkTheme ? '#fff' : '#006aff'}}>
                                 Save
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                        style={{...styles.Button, width: '30%', marginLeft: '5%'}}
+                        style={{...styles.Button, width: '30%', marginLeft: '5%', backgroundColor: darkTheme ? '#4a4a4a' :"lightgrey"}}
                         onPress={() => cancelAddPost()}
                         >
-                            <Text style={styles.ButtonText}>
+                            <Text style={{...styles.ButtonText, color: darkTheme ? '#fff' : '#006aff'}}>
                                 Cancel
                             </Text>
                         </TouchableOpacity>
@@ -528,13 +530,13 @@ const styles = StyleSheet.create({
     },
     ButtonText: {
         fontSize: 14,
-        color: '#006aff',
+        color: '#fff',
         fontWeight: 'bold',
         alignSelf: 'center',
     },
     Input: {
         alignSelf: 'center',
-        height: 40,
+        height: 35,
         width: '90%',
         borderColor: 'gray',
         borderWidth: 1,
@@ -542,7 +544,7 @@ const styles = StyleSheet.create({
         marginTop: '2%'
     },
     InputHeader: {
-        fontSize: 16,
+        fontSize: 15,
         marginTop: '10%'
     },
     InputContainer: {
@@ -553,7 +555,7 @@ const styles = StyleSheet.create({
     },
     MainProfileImage: {
         height: '70%',
-        width: '20%',
+        width: '30%',
         marginLeft: '5%',
         borderRadius: 50,
         marginTop: '3%'
@@ -623,7 +625,7 @@ const styles = StyleSheet.create({
     ProfileModalButtonsContainer: {
         flexDirection: 'row',
         width:'100%',
-        marginTop: '5%',
+        marginTop: '3%',
         alignItems: 'center'
     },
     PostModalHeader: {

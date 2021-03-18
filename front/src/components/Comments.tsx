@@ -4,6 +4,7 @@ import {useC, useUpdateC} from '../context/Context'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import axios from 'axios';
 import {io} from 'socket.io-client'
+import { StatusBar } from 'expo-status-bar';
 
 
 
@@ -46,6 +47,7 @@ const Comments = ({navigation}:any) => {
 
     return (
         <View>
+            <StatusBar style={darkTheme ? "light" : 'dark'} />
             <View>
             {/* post here */}
             </View>

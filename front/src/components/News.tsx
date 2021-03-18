@@ -8,6 +8,7 @@ import axios from 'axios';
 import {useC, useUpdateC} from '../context/Context'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Camera } from 'expo-camera'
+import { StatusBar } from 'expo-status-bar';
 
 // Notifications.setNotificationHandler({
 // 	handleNotification: async () => ({
@@ -165,6 +166,7 @@ const News = ({navigation}:any) => {
 
 	return (
 		<View style={{...styles.MainView, backgroundColor: darkTheme ? 'black' : 'lightgrey'}}>
+			<StatusBar style={darkTheme ? "light" : 'dark'} />
 			<ScrollView style={{height: '100%'}}>
 				{(allPosts.length !== 0)
 					? allPosts.map((post:any, index:any) => (
@@ -317,7 +319,6 @@ const styles = StyleSheet.create({
 		marginTop: '2%',
 		fontSize: 16,
 		fontStyle: 'normal',
-		color: '#41454a',
 		marginLeft: '3%'
 	}
 });

@@ -81,7 +81,7 @@ const Login = ({navigation}:any) => {
 
     return (
         <View style={{...styles.MainView, backgroundColor: darkTheme ? 'black' : 'lightgrey'}}>
-            <StatusBar style="light" />
+            <StatusBar style={darkTheme ? "light" : 'dark'} />
             <View style={{...styles.FormContainer, backgroundColor: darkTheme ? '#141414' : 'white'}}>
                 <Text style={{...styles.Header, color: darkTheme ? 'white' : 'black'}}>My Project Login</Text>
                 <Text style={{...styles.Text, color: darkTheme ? 'white' : 'black'}}>Email:</Text>
