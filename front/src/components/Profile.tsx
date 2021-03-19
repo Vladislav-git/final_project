@@ -57,6 +57,12 @@ const Profile = ({navigation}:any) => {
         
     },[])
 
+    useEffect(() => {
+		(() => {
+			data.token === '' ? navigation.navigate('Login') : null
+		})()
+	}, [data.token])
+
     const saveProfileData = () => {
         axios('http://10.0.2.2:8000/update-profile',{
                 method: 'put',
@@ -69,6 +75,7 @@ const Profile = ({navigation}:any) => {
                     setProfileModalIsVisible(false)
                 } else {
                     alert(data)
+                    navigation.navigate('Login')
                 }
             })
             .catch(error => {
@@ -163,7 +170,7 @@ const Profile = ({navigation}:any) => {
 				.catch(err => alert(err))
 		}
 	}
-
+    
     // const camera = async (ref) => {
     //     const photo = await ref.takePictureAsync()
     // }
@@ -283,16 +290,16 @@ const Profile = ({navigation}:any) => {
                                     ? 
                                         <TouchableOpacity style={{marginTop: '2.5%', height: 50,flexDirection: 'row', marginLeft: '5%'}} onPress={() => changeLike(post, 0)}>
                                             <MaterialCommunityIcons
-                                            name='heart'
+                                            name='heart-outline'
                                             color={'red'}
                                             size={23}
                                             />
-                                            <Text style={{color: darkTheme ? '#787878' : '#41454a', marginTop: '5%'}}>{post.like_number}</Text>
+                                            <Text style={{color: 'red', marginTop: '5%'}}>{post.like_number}</Text>
                                         </TouchableOpacity>
                                     : 
                                         <TouchableOpacity style={{marginTop: '2.5%', height: 50, flexDirection: 'row', marginLeft: '5%'}} onPress={() => changeLike(post, 1)}>
                                             <MaterialCommunityIcons
-                                            name='heart'
+                                            name='heart-outline'
                                             color={darkTheme ? '#787878' : '#41454a'}
                                             size={23}
                                             />
@@ -305,7 +312,7 @@ const Profile = ({navigation}:any) => {
                                     
                                 }}>
                                     <MaterialCommunityIcons
-                                    name='comment'
+                                    name='comment-outline'
                                     color={darkTheme ? '#787878' : '#41454a'}
                                     size={23}
                                     />

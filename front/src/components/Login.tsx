@@ -55,7 +55,7 @@ const Login = ({navigation}:any) => {
                 const validData = {...data}
                 axios({
                     method: 'post',
-                    url: 'http://192.168.31.181:8000/login', //192.168.31.181
+                    url: 'http://192.168.31.181:8000/api/login', //192.168.31.181
                     data: validData,
                 })
                     .then(resp => {
@@ -178,7 +178,7 @@ const Login = ({navigation}:any) => {
                             alert('Phone authentication successful 👍');
                             axios({
                                 method: 'post',
-                                url: 'http://10.0.2.2:8000/google',
+                                url: 'http://10.0.2.2:8000/api/google',
                                 data: result.user,
                             })
                                 .then(resp => {

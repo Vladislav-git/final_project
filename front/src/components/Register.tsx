@@ -32,7 +32,7 @@ const Register = ({navigation}:any) => {
                 validData.created_date = (new Date()).toString()
                 axios({
                     method: 'post',
-                    url: 'http://10.0.2.2:8000/register',
+                    url: 'http://10.0.2.2:8000/api/register',
                     data: validData,
                 })
                     .then(resp => {

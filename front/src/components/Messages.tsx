@@ -7,7 +7,7 @@ import { Video } from 'expo-av';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StatusBar } from 'expo-status-bar';
 
-const Messages = () => {
+const Messages = ({navigation}:any) => {
 
     const {darkTheme, data}:any = useC();
     const {updateData}:any = useUpdateC();
@@ -38,6 +38,12 @@ const Messages = () => {
             })
         })()
     },[])
+
+    useEffect(() => {
+		(() => {
+			data.token === '' ? navigation.navigate('Login') : null
+		})()
+	}, [data.token])
 
     const socket = io('http://192.168.31.181:8000')
 
@@ -155,7 +161,7 @@ const Messages = () => {
             </View>
             <Modal
             visible={isVisible}
-            animationType='slide'
+            animationType='none'
             transparent={true}
             onRequestClose={() => Cancel()}
             >
@@ -236,7 +242,8 @@ const styles = StyleSheet.create({
         width: '70%',
         borderRadius: 10,
         alignSelf: 'flex-end',
-        marginTop: '3%'
+        marginTop: '2%',
+        marginBottom: '2%'
     },
     ChatUserMessageText: {
         textAlign: 'auto',

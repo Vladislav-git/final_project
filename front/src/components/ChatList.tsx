@@ -41,6 +41,12 @@ const ChatList = ({navigation}:any) => {
         })()
     }, [])
 
+    useEffect(() => {
+		(() => {
+			data.token === '' ? navigation.navigate('Login') : null
+		})()
+	}, [data.token])
+
     const addChat = async (email:any) => {
         axios('http://10.0.2.2:8000/add-chat',{
             method: 'post',
@@ -56,8 +62,6 @@ const ChatList = ({navigation}:any) => {
             })
             .catch(err => alert(err.message))
     }
-
-    // console.log(chats.filter((chat:any) => chatUsersInfo[0].chats.indexOf(chat) >= 0))
 
     return (
         <View style={{flex: 1, backgroundColor: darkTheme ? 'black' : 'white'}}>
@@ -102,39 +106,40 @@ const ChatList = ({navigation}:any) => {
             animationType='slide'
             transparent={true}
             >
-                <View style={styles.Modal}>
-                    {(friends.length !== 0)
-                        ? friends.map((friend:any, index:number) => (
-                            <View style={styles.FriendContainer} key={index}>
-                                {friend.chats.filter((chat:any) => data.user.chats.indexOf(chat) >= 0) && friend.chats.length !== 0
-                                ? null
-                                :<View style={{flexDirection: 'row'}}>
-                                    <Image source={(friend.avatar !== '')
-                                        ? {uri: friend.avatar}
-                                        : require('../../assets/default_user.png')
-                                    }
-                                    style={{width: '10%', height: '40%', marginTop: '1%', borderRadius:50}}
-                                    />
-                                    <Text style={{marginTop: '2%', marginLeft: '2%'}}>{friend.firstname} {friend.secondname}</Text>
-                                    <TouchableOpacity onPress={() => addChat(friend.email)}>
-                                        <MaterialCommunityIcons
-                                        style={{alignSelf: 'flex-end'}}
-                                        name="chat-plus"
-                                        color={'black'}
-                                        size={26}
+                <View style={{...styles.Modal, backgroundColor: darkTheme ? 'black' : 'white', borderColor: darkTheme ? 'white' : 'black'}}>
+                    <Text style={{...styles.ModalText, color: darkTheme ? 'white' : 'black'}}>Add chat with friends</Text>
+                    <ScrollView style={{flex: 1}}>
+                        {(friends.length !== 0)
+                            ? friends.map((friend:any, index:number) => (
+                                <View key={index}>
+                                    {friend.chats.filter((chatId:any) => data.user.chats.indexOf(chatId) >= 0).length !== 0
+                                    ? null
+                                    : <View style={{...styles.FriendContainer, backgroundColor: darkTheme ? '#212121' : 'white'}}>
+                                        <Image source={(friend.avatar !== '')
+                                            ? {uri: friend.avatar}
+                                            : require('../../assets/default_user.png')
+                                        }
+                                        style={{width: 50, height: 50, marginTop: '2.5%', borderRadius:50, marginLeft: '10%'}}
                                         />
-                                    </TouchableOpacity>
+                                        <Text style={{marginTop: '4%', marginLeft: '2%', color: darkTheme ? 'white' :'black'}}>{friend.firstname} {friend.secondname}</Text>
+                                        <TouchableOpacity onPress={() => addChat(friend.email)}>
+                                            <MaterialCommunityIcons
+                                            style={{marginLeft: '40%', marginTop: '13%'}}
+                                            name="chat-plus"
+                                            color={darkTheme ? 'white' :'black'}
+                                            size={26}
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                    } 
+                                    
                                 </View>
-                                }
-                                
-                            </View>
-                        ))
-                        : <Text style={{marginLeft: '5%'}}>no friends</Text> 
-                    }
-
-
-                    <TouchableOpacity onPress={() => setIsVisible(false)}>
-                        <Text>Cancel</Text>
+                            ))
+                            : <Text style={{marginLeft: '5%'}}>no friends</Text> 
+                        }
+                    </ScrollView>
+                    <TouchableOpacity style={{...styles.Button, backgroundColor: darkTheme ? '#4a4a4a' :"#327ba8"}} onPress={() => setIsVisible(false)}>
+                        <Text style={styles.ButtonText}>Cancel</Text>
                     </TouchableOpacity>
                 </View>
             </Modal>
@@ -201,19 +206,24 @@ const styles = StyleSheet.create({
         width: '80%',
         borderWidth: 1,
         borderRadius: 20,
-        color: 'grey',
         alignSelf: 'center',
-        backgroundColor: 'white',
     },
     FriendContainer: {
-        flexDirection: 'row',
-        height: '30%',
-        marginLeft: '5%'
+        height: 65,
+        marginTop: '10%',
+        flexDirection: 'row'
     },
     Box: {
         height: '80%',
         width: '100%',
         borderWidth: 1
+    },
+    ModalText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        color: 'black',
+        marginTop: '2%'
     }
 })
 

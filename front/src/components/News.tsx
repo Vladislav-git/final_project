@@ -130,10 +130,16 @@ const News = ({navigation}:any) => {
 				method: 'get',
 				headers: {Authorization: 'Bearer ' + data.token},
 			})
-			.then((info:any) => setAllPosts(info.data))
-			.catch(err => alert(err))
+				.then((info:any) => setAllPosts(info.data))
+				.catch(err => alert(err))
         })()
     }, [])
+
+	useEffect(() => {
+		(() => {
+			data.token === '' ? navigation.navigate('Login') : null
+		})()
+	}, [data.token])
 
 	const changeLike = async (post:any, number:number) => {
 		if (number === 0) {

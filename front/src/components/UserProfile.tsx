@@ -61,6 +61,12 @@ const UserProfile = ({navigation}:any) => {
         
     },[])
 
+    useEffect(() => {
+		(() => {
+			data.token === '' ? navigation.navigate('Login') : null
+		})()
+	}, [data.token])
+
 
     const changeLike = async (post:any, number:number) => {
 		if (number === 0) {
@@ -87,10 +93,10 @@ const UserProfile = ({navigation}:any) => {
 	}
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={{...styles.container, backgroundColor: darkTheme ? 'black' : 'white'}}>
             <StatusBar style={darkTheme ? "light" : 'dark'} />
             <ScrollView style={styles.scrollView}>
-                <View style={styles.PreProfile}>
+                <View style={{...styles.PreProfile, borderBottomWidth: 1, borderBottomColor: darkTheme ? 'grey' : 'lightgrey', backgroundColor: darkTheme ? '#212121' : 'white'}}>
                     <Image
                     source={(profile.avatar !== '')
                         ? {uri : profile.avatar}
@@ -98,7 +104,7 @@ const UserProfile = ({navigation}:any) => {
                     }
                     style={styles.MainProfileImage}
                     />
-                    <Text style={{fontSize: 25, marginLeft: '5%', marginTop: '5%'}}>
+                    <Text style={{fontSize: 25, marginLeft: '5%', marginTop: '5%', color: darkTheme ? 'white' : 'black'}}>
                         {profile.firstname} {profile.secondname}
                     </Text>
                 </View>
@@ -110,35 +116,35 @@ const UserProfile = ({navigation}:any) => {
                         <Text style={styles.ButtonText}>Edit</Text>
                     </TouchableOpacity>
                 </View> */}
-                <View style={styles.Profile}>
+                <View style={{...styles.Profile, borderBottomColor: darkTheme ? 'grey' : 'lightgrey', backgroundColor: darkTheme ? '#212121' : 'white'}}>
                     <View style={{width: '10%', marginTop: '2%', marginBottom: '2%'}}>
                         <MaterialCommunityIcons
                         name='cake'
-                        color={'#41454a'}
+                        color={darkTheme ? '#787878' : '#41454a'}
                         size={26}
                         style={{alignSelf:'flex-end'}}
                         />
                         <MaterialCommunityIcons
                         name='city'
-                        color={'#41454a'}
+                        color={darkTheme ? '#787878' : '#41454a'}
                         size={26}
                         style={{alignSelf:'flex-end'}}
                         />
                         <MaterialCommunityIcons
                         name='phone'
-                        color={'#41454a'}
+                        color={darkTheme ? '#787878' : '#41454a'}
                         size={26}
                         style={{alignSelf:'flex-end'}}
                         />
                     </View>
-                    <View style={{marginTop: '2%', marginBottom: '2%'}}>
-                        <Text style={styles.ProfileText}>
+                    <View style={{marginTop: '2%', marginBottom: '2%', backgroundColor: darkTheme ? '#212121' : 'white'}}>
+                        <Text style={{...styles.ProfileText, color: darkTheme ? '#787878' : '#41454a'}}>
                             Birth date: {profile.profile.birth_date}
                         </Text>
-                        <Text style={styles.ProfileText}>
+                        <Text style={{...styles.ProfileText, color: darkTheme ? '#787878' : '#41454a'}}>
                             City: {profile.profile.city}
                         </Text>
-                        <Text style={styles.ProfileText}>
+                        <Text style={{...styles.ProfileText, color: darkTheme ? '#787878' : '#41454a'}}>
                             Phone number: {profile.profile.phone_number}
                         </Text>
                     </View>
@@ -146,7 +152,7 @@ const UserProfile = ({navigation}:any) => {
                 {(posts.length !== 0)
                 ?
                     posts.map((post:any, index:any) => (
-                        <View key={index} style={styles.Post}>
+                        <View key={index} style={{...styles.Post, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                             <View key={index} style={{flexDirection: 'row'}}>
                                 <Image
                                 source={(post.user_img !== '')
@@ -155,12 +161,12 @@ const UserProfile = ({navigation}:any) => {
                                 }
                                 style={styles.UserImage}
                                 />
-                                <Text style={{marginLeft: '3%', marginTop: '4%'}}>
+                                <Text style={{marginLeft: '3%', marginTop: '4%', color: darkTheme ? 'white' : 'black'}}>
                                     {post.user_name}
                                 </Text>
                             </View>
                             
-                            <Text style={{marginLeft: '7%', marginTop: '4%'}}>
+                            <Text style={{marginLeft: '7%', marginTop: '4%', color: darkTheme ? 'white' : 'black'}}>
                                 {post.post_text}
                             </Text>
                             {(post.post_img !== '')
@@ -181,41 +187,41 @@ const UserProfile = ({navigation}:any) => {
                             :
                                 null
                             }
-                            <View>
+                            <View style={{flexDirection: 'row'}}>
                                 {post.who_liked.find((item:any) => item === profile._id)
-                                    ? <View style={{borderWidth: 1, flexDirection: 'row'}}>
+                                    ? <View style={{flexDirection: 'row', height: 40, marginTop: '3%', marginLeft: '5%'}}>
                                         <TouchableOpacity onPress={() => changeLike(post, 0)}>
                                             <MaterialCommunityIcons
-                                            name='heart'
+                                            name='heart-outline'
                                             color={'red'}
                                             size={26}
                                             />
                                         </TouchableOpacity>
-                                        <Text>{post.like_number}</Text>
+                                        <Text style={{marginTop: '3%', color: 'red'}}>{post.like_number}</Text>
                                     </View>
-                                    : <View style={{borderWidth: 1, flexDirection: 'row', height: 50}}>
+                                    : <View style={{flexDirection: 'row', height: 40, marginTop: '3%', marginLeft: '5%'}}>
                                         <TouchableOpacity onPress={() => changeLike(post, 1)}>
                                             <MaterialCommunityIcons
-                                            name='heart'
-                                            color={'#41454a'}
+                                            name='heart-outline'
+                                            color={darkTheme ? '#787878' : '#41454a'}
                                             size={26}
                                             />
                                         </TouchableOpacity>
-                                        <Text>{post.like_number}</Text>
+                                        <Text style={{marginTop: '7%', color: darkTheme ? '#787878' : '#41454a'}}>{post.like_number}</Text>
                                         <Text></Text>
                                     </View>
                                 }
-                                <TouchableOpacity onPress={() => {
+                                <TouchableOpacity style={{flexDirection: 'row', height: 40, marginTop: '3%', marginLeft: '10%'}} onPress={() => {
                                     updateData({...data, post})
                                     navigation.navigate('Comments')
                                     
                                 }}>
                                     <MaterialCommunityIcons
-                                    name='comment'
-                                    color={'#41454a'}
+                                    name='comment-outline'
+                                    color={darkTheme ? '#787878' : '#41454a'}
                                     size={26}
                                     />
-                                    <Text>{post.comment_number}</Text>
+                                    <Text style={{marginTop: '7%', color: darkTheme ? '#787878' : '#41454a'}}>{post.comment_number}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -226,7 +232,7 @@ const UserProfile = ({navigation}:any) => {
                 {/* <Camera style={{height: '30%'}} type={Camera.Constants.Type.back} ref={(ref) => camera(ref)} /> */}
                 <View style={{marginBottom: '30%'}}></View>
             </ScrollView>
-            </SafeAreaView>
+            </View>
     )
 }
 
@@ -235,20 +241,9 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollView: {
-        backgroundColor: 'lightgrey',
     },
       text: {
         fontSize: 42,
-    },
-    Modal: {
-        marginTop: '10%',
-        height: Dimensions.get('screen').height - 200,
-        width: '80%',
-        borderWidth: 1,
-        borderRadius: 20,
-        color: 'grey',
-        alignSelf: 'center',
-        backgroundColor: 'white',
     },
     
     Button: {
@@ -261,7 +256,6 @@ const styles = StyleSheet.create({
     },
     ButtonText: {
         fontSize: 14,
-        color: '#006aff',
         fontWeight: 'bold',
         alignSelf: 'center',
     },
@@ -293,7 +287,6 @@ const styles = StyleSheet.create({
     },
     PreProfile: {
         flexDirection: 'row',
-        backgroundColor: 'white',
         width: '100%',
         height: '20%'
     },
@@ -301,26 +294,17 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         borderBottomWidth: 1,
         flexDirection: 'row',
-        backgroundColor: 'white'
     },
     ProfileText: {
         fontSize: 18,
         marginLeft: '5%',
-        color: '#41454a',
         marginTop: '1%',
         alignSelf: 'flex-start'
     },
-    AnythingNewBlock: {
-        marginTop: '2%',
-        backgroundColor: 'white',
-        height: '6%',
-        justifyContent: 'center'
-    },
     Post: {
-        height: 200,
+        flex: 1,
         marginTop: '2%',
         borderWidth: 1,
-        backgroundColor: 'white'
     },
     UserImage: {
         width: 40,
@@ -330,8 +314,8 @@ const styles = StyleSheet.create({
         marginTop: '2%'
     },
     PostImage: {
-        height: '40%',
-        width: '95%',
+        height: 200,
+        width: '100%',
         alignSelf: 'center',
         marginTop: '5%'
     },
@@ -342,43 +326,6 @@ const styles = StyleSheet.create({
         marginLeft: '5%',
         marginTop: '5%'
     },
-    ProfileModalHeader: {
-        alignSelf: 'center',
-        fontSize: 24,
-        marginTop: '3%',
-        fontWeight: 'bold'
-    },
-    Picker: {
-        height: '20%',
-        width: '70%',
-        alignSelf: 'center',
-        marginRight: '30%'
-    },
-    ProfileModalButtonsContainer: {
-        flexDirection: 'row',
-        width:'100%',
-        marginTop: '5%',
-        alignItems: 'center'
-    },
-    PostModalHeader: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        alignSelf: 'center',
-        marginTop: '3%'
-    },
-    PostModalImage: {
-        height: '80%',
-        width: '80%',
-        marginLeft: '5%',
-        marginTop: '5%'
-    },
-    PostModalVideo: {
-        height: '80%',
-        width: '80%',
-        alignSelf: 'flex-start',
-        marginLeft: '5%',
-        marginTop: '5%'
-    }
 })
 
 

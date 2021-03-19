@@ -8,14 +8,15 @@ import Comments from '../components/Comments'
 import UserProfile from '../components/UserProfile'
 import {useC, useUpdateC} from '../context/Context'
 import TabNavigation from './TabNavigation'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 
 const Stack = createStackNavigator();
 
 const MainNavigation = () => {
 
-    const {darkTheme}:any = useC();
-    const {toggleTheme}:any = useUpdateC();
+    const {darkTheme, data}:any = useC();
+    const {toggleTheme, updateData}:any = useUpdateC();
 
     const options = {
         headerStyle: {
@@ -25,11 +26,39 @@ const MainNavigation = () => {
         },
         headerTintColor: darkTheme ? 'white' : 'black',
         headerRight: () => (
-            <Button
-              onPress={() => toggleTheme()}
-              title="Theme"
-              color="black"
-            />
+            <View style={{flexDirection: 'row', justifyContent: 'space-around', width: 70}}>
+                <TouchableOpacity onPress={() => toggleTheme()}>
+                    {darkTheme
+                        ? <MaterialCommunityIcons
+                        style={{alignSelf: 'flex-end'}}
+                        name="white-balance-sunny"
+                        color={'white'}
+                        size={26}
+                        />
+                        : <MaterialCommunityIcons
+                        style={{alignSelf: 'flex-end'}}
+                        name="moon-waxing-crescent"
+                        color={'black'}
+                        size={26}
+                        />
+                    }
+                    
+                </TouchableOpacity>
+                {data.token
+                    ? <TouchableOpacity onPress={() => {
+                        updateData({...data, token: ''})
+                    }}>
+                        <MaterialCommunityIcons
+                        style={{alignSelf: 'flex-end'}}
+                        name="logout"
+                        color={darkTheme ? 'white' : 'black'}
+                        size={26}
+                        />
+                    </TouchableOpacity>
+                    : null
+                }
+                
+            </View>
         ),
     }
 

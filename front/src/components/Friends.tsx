@@ -6,7 +6,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { StatusBar } from 'expo-status-bar';
 
 
-const Friends = () => {
+const Friends = ({navigation}:any) => {
 
     const {darkTheme, data}:any = useC();
     const {updateData}:any = useUpdateC();
@@ -37,6 +37,12 @@ const Friends = () => {
                 .catch(err => alert(err))
         })()
     },[])
+
+    useEffect(() => {
+		(() => {
+			data.token === '' ? navigation.navigate('Login') : null
+		})()
+	}, [data.token])
 
     const addFriend = async (id:any) => {
         axios('http://10.0.2.2:8000/add-friend', {
@@ -111,7 +117,7 @@ const Friends = () => {
                                 style={{width: '15%', height: '80%', marginTop: '1%', borderRadius: 50, marginLeft: '10%'}}
                                 />
                                 <Text style={{marginTop: '2%', marginLeft: '2%', width: '50%', color: darkTheme ? 'white' : 'black' }}>{user.firstname} {user.secondname}</Text>
-                                {data.user.friends.filter((friendId:any) => friendId === user._id)
+                                {data.user.friends[index] === user._id
                                     ? <TouchableOpacity style={styles.AddRemFriend} key={index} onPress={() => removeFriend(user._id)}>
                                         <MaterialCommunityIcons
                                         style={{alignSelf: 'flex-end'}}
