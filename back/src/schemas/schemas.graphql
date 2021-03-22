@@ -1,0 +1,41 @@
+type Query {
+    getAllPosts(current_user: String!): [Post],
+}
+
+type Mutation {
+    updateProfile(body: User!): User,
+}
+
+type Post {
+    _id: ID,
+    user_name: String,
+    user_img: String,
+    user_id: ID,
+    post_text: String,
+    post_img: String,
+    post_video: String,
+    like_number: Int,
+    who_liked: [Int],
+    comments: [ID],
+    comment_number: Int
+}
+
+type User {
+    _id: ID
+    firstname: String,
+    secondname: String,
+    email: String,
+    password: String,
+    created_date: String,
+    profile: {
+        gender: String,
+        birth_date: String,
+        city: String,
+        phone_number: String
+    },
+    friends: [ID],
+    images: [String],
+    videos: [String],
+    avatar: String,
+    chats: [ID]
+}

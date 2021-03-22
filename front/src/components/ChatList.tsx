@@ -8,7 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 
 const ChatList = ({navigation}:any) => {
     
-    const {darkTheme, data}:any = useC();
+    const {darkTheme, context}:any = useC();
     const {updateData}:any = useUpdateC();
 
     const [chatUsersInfo, setChatUsersInfo]:any = useState([])
@@ -20,7 +20,7 @@ const ChatList = ({navigation}:any) => {
         (async () => {
             axios('http://10.0.2.2:8000/get-chats',{
                 method: 'get',
-                headers: {Authorization: 'Bearer ' + data.token},
+                headers: {Authorization: 'Bearer ' + context.token},
             })
                 .then((respchats:any) => {
                     setChats(respchats.data.chats)
@@ -32,7 +32,7 @@ const ChatList = ({navigation}:any) => {
                 })
             axios('http://10.0.2.2:8000/get-friends', {
                 method: 'get',
-                headers: {Authorization: 'Bearer ' + data.token},
+                headers: {Authorization: 'Bearer ' + context.token},
             })
                 .then(friendsInfoList => {
                     setFriends(friendsInfoList.data)
@@ -43,19 +43,19 @@ const ChatList = ({navigation}:any) => {
 
     useEffect(() => {
 		(() => {
-			data.token === '' ? navigation.navigate('Login') : null
+			context.token === '' ? navigation.navigate('Login') : null
 		})()
-	}, [data.token])
+	}, [context.token])
 
     const addChat = async (email:any) => {
         axios('http://10.0.2.2:8000/add-chat',{
             method: 'post',
-            headers: {Authorization: 'Bearer ' + data.token},
+            headers: {Authorization: 'Bearer ' + context.token},
             data: {chat_user: email}
         })
             .then(resp => {
                 if (resp.data.msg === 'new chat created') {
-                    updateData({...data, user: resp.data.current_user})
+                    updateData({...context, user: resp.data.current_user})
                 } else {
                     console.log(resp)
                 }
@@ -83,7 +83,7 @@ const ChatList = ({navigation}:any) => {
                         activeOpacity={1}
                         onPress={() => {
                             const current_chat = chats.filter((chat:any) => chatUser._id.toString() === chat.chat_user_id.toString() || chatUser._id.toString() === chat.current_user_id.toString())
-                            updateData({...data, current_chat})
+                            updateData({...context, current_chat})
                             navigation.navigate('Messages')
                         }}
                         >
@@ -112,7 +112,7 @@ const ChatList = ({navigation}:any) => {
                         {(friends.length !== 0)
                             ? friends.map((friend:any, index:number) => (
                                 <View key={index}>
-                                    {friend.chats.filter((chatId:any) => data.user.chats.indexOf(chatId) >= 0).length !== 0
+                                    {friend.chats.filter((chatId:any) => context.user.chats.indexOf(chatId) >= 0).length !== 0
                                     ? null
                                     : <View style={{...styles.FriendContainer, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                                         <Image source={(friend.avatar !== '')

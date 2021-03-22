@@ -9,7 +9,7 @@ import { StatusBar } from 'expo-status-bar';
 
 const Messages = ({navigation}:any) => {
 
-    const {darkTheme, data}:any = useC();
+    const {darkTheme, context}:any = useC();
     const {updateData}:any = useUpdateC();
 
     const initialMessage = {
@@ -24,9 +24,9 @@ const Messages = ({navigation}:any) => {
     const [isVisible, setIsVisible] = useState(false)
 
     const info = {
-        chat_id: data.current_chat[0]._id,
-        user_id: data.user._id,
-        chat_user: (data.user._id === data.current_chat[0].chat_user_id) ? data.current_chat[0].current_user_id : data.current_chat[0].chat_user_id
+        chat_id: context.current_chat[0]._id,
+        user_id: context.user._id,
+        chat_user: (context.user._id === context.current_chat[0].chat_user_id) ? context.current_chat[0].current_user_id : context.current_chat[0].chat_user_id
     }
 
     useEffect(() => {
@@ -41,14 +41,14 @@ const Messages = ({navigation}:any) => {
 
     useEffect(() => {
 		(() => {
-			data.token === '' ? navigation.navigate('Login') : null
+			context.token === '' ? navigation.navigate('Login') : null
 		})()
-	}, [data.token])
+	}, [context.token])
 
     const socket = io('http://192.168.31.181:8000')
 
     const sendMessage = () => {
-        socket.emit('msg', {message, current_chat: data.current_chat, id: data.user._id})
+        socket.emit('msg', {message, current_chat: context.current_chat, id: context.user._id})
         setMessage(initialMessage)
     }
 
@@ -95,7 +95,7 @@ const Messages = ({navigation}:any) => {
             <ScrollView style={{...styles.Messages, borderTopColor: darkTheme ? 'grey' : 'black', borderBottomColor: darkTheme ? 'grey' : 'black'}}>
                 {(allMessages.length !== 0)
                     ? allMessages.map((userMessage:any, index) => (
-                        (userMessage.user_id === data.user._id)
+                        (userMessage.user_id === context.user._id)
                             ? <View key={index} style={{...styles.MessageTextBox, backgroundColor: darkTheme ? '#787878' : '#b8d3ff'}}>
                                 <Text style={{...styles.UserMessageText, color: darkTheme ? 'white' : 'black'}}>{userMessage.message_text}</Text>
                                 {userMessage.message_video === ''

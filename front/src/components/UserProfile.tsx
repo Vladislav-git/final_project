@@ -8,7 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 
 const UserProfile = ({navigation}:any) => {
 
-    const {darkTheme, data}:any = useC();
+    const {darkTheme, context}:any = useC();
     const {updateData}:any = useUpdateC();
 
     const [posts, setPosts]:any = useState([])
@@ -35,9 +35,9 @@ const UserProfile = ({navigation}:any) => {
 
     useEffect(() => {
         (async () => {
-            axios(`http://10.0.2.2:8000/get-user-posts/${data.user_profile}`,{
+            axios(`http://10.0.2.2:8000/get-user-posts/${context.user_profile}`,{
                 method: 'get',
-                headers: {Authorization: 'Bearer ' + data.token},
+                headers: {Authorization: 'Bearer ' + context.token},
             })
                 .then(allUserPosts => {
                     setPosts(allUserPosts.data)
@@ -46,9 +46,9 @@ const UserProfile = ({navigation}:any) => {
                     alert(error)
                     navigation.navigate('Login')
                 })
-            axios(`http://10.0.2.2:8000/get-user-profile/${data.user_profile}`,{
+            axios(`http://10.0.2.2:8000/get-user-profile/${context.user_profile}`,{
                 method: 'get',
-                headers: {Authorization: 'Bearer ' + data.token},
+                headers: {Authorization: 'Bearer ' + context.token},
             })
                 .then(profile => {
                     setProfile(profile.data)
@@ -63,28 +63,28 @@ const UserProfile = ({navigation}:any) => {
 
     useEffect(() => {
 		(() => {
-			data.token === '' ? navigation.navigate('Login') : null
+			context.token === '' ? navigation.navigate('Login') : null
 		})()
-	}, [data.token])
+	}, [context.token])
 
 
     const changeLike = async (post:any, number:number) => {
 		if (number === 0) {
 			post.like_number -= 1
-			post.who_liked = post.who_liked.filter((userId:any) => userId !== data.user._id)
+			post.who_liked = post.who_liked.filter((userId:any) => userId !== context.user._id)
 			axios('http://10.0.2.2:8000/change-like', {
 				method: 'put',
-				headers: {Authorization: 'Bearer ' + data.token},
+				headers: {Authorization: 'Bearer ' + context.token},
 				data: post
 			})
 				.then(info => console.log('ok'))
 				.catch(err => alert(err))
 		} else {
 			post.like_number += 1
-			post.who_liked.push(data.user._id)
+			post.who_liked.push(context.user._id)
 			axios('http://10.0.2.2:8000/change-like', {
 				method: 'put',
-				headers: {Authorization: 'Bearer ' + data.token},
+				headers: {Authorization: 'Bearer ' + context.token},
 				data: post
 			})
 				.then(info => console.log('ok'))
@@ -208,11 +208,10 @@ const UserProfile = ({navigation}:any) => {
                                             />
                                         </TouchableOpacity>
                                         <Text style={{marginTop: '7%', color: darkTheme ? '#787878' : '#41454a'}}>{post.like_number}</Text>
-                                        <Text></Text>
                                     </View>
                                 }
                                 <TouchableOpacity style={{flexDirection: 'row', height: 40, marginTop: '3%', marginLeft: '10%'}} onPress={() => {
-                                    updateData({...data, post})
+                                    updateData({...context, post})
                                     navigation.navigate('Comments')
                                     
                                 }}>

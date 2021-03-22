@@ -12,14 +12,14 @@ import { Video } from 'expo-av';
 
 const Comments = ({navigation}:any) => {
 
-    const {darkTheme, data}:any = useC();
+    const {darkTheme, context}:any = useC();
     const {updateData}:any = useUpdateC();
     const [allComments, setAllComments] = useState([])
     const [isVisible, setIsVisible] = useState(false)
     
     const initialComment = {
-        user_id: data.user._id,
-        post_id: data.post._id,
+        user_id: context.user._id,
+        post_id: context.post._id,
         comment_text: '',
         comment_img: '',
         comment_video: '',
@@ -29,7 +29,7 @@ const Comments = ({navigation}:any) => {
 
     useEffect(() => {
         (() => {
-            socket.emit('get-comments', data.post._id)
+            socket.emit('get-comments', context.post._id)
             socket.on('get-comments', (comments:any) => {
                 setAllComments(comments)
             })
@@ -38,9 +38,9 @@ const Comments = ({navigation}:any) => {
 
     useEffect(() => {
 		(() => {
-			data.token === '' ? navigation.navigate('Login') : null
+			context.token === '' ? navigation.navigate('Login') : null
 		})()
-	}, [data.token])
+	}, [context.token])
 
     const socket = io('http://192.168.31.181:8000')
 
@@ -53,7 +53,7 @@ const Comments = ({navigation}:any) => {
         socket.emit('add-comment', comment)
         setComment(initialComment)
         socket.on('add-comment', (post:any) => {
-            updateData({...data, post: post})
+            updateData({...context, post: post})
         })
     }
 
@@ -87,33 +87,33 @@ const Comments = ({navigation}:any) => {
                     <View style={{...styles.Post, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                         <View style={{flexDirection: 'row'}}>
                             <Image
-                            source={(data.post.user_img !== '')
-                            ? {uri : data.post.user_img}
+                            source={(context.post.user_img !== '')
+                            ? {uri : context.post.user_img}
                             : require('../../assets/default_user.png')
                             }
                             style={styles.UserImage}
                             />
                             <Text style={{marginLeft: '3%', marginTop: '4%', color: darkTheme ? 'white' : 'black'}}>
-                                {data.post.user_name}
+                                {context.post.user_name}
                             </Text>
                         </View>
                         
                         <Text style={{marginLeft: '7%', marginTop: '4%', color: darkTheme ? 'white' : 'black'}}>
-                            {data.post.post_text}
+                            {context.post.post_text}
                         </Text>
-                        {(data.post.post_img !== '')
+                        {(context.post.post_img !== '')
                         ?
                             <Image
-                            source={{uri: data.post.post_img}}
+                            source={{uri: context.post.post_img}}
                             style={styles.PostImage}
                             />
                         :
                             null
                         }
-                        {(data.post.post_video !== '')
+                        {(context.post.post_video !== '')
                         ?
                             <Video
-                            source={{uri: data.post.post_video}}
+                            source={{uri: context.post.post_video}}
                             style={styles.PostVideo}
                             />
                         :

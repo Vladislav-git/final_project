@@ -9,6 +9,7 @@ import {useC, useUpdateC} from '../context/Context'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Camera } from 'expo-camera'
 import { StatusBar } from 'expo-status-bar';
+import { useQuery, gql } from '@apollo/client';
 
 // Notifications.setNotificationHandler({
 // 	handleNotification: async () => ({
@@ -120,44 +121,68 @@ import { StatusBar } from 'expo-status-bar';
 
 const News = ({navigation}:any) => {
 
-	const {darkTheme, data}:any = useC();
+	const {darkTheme, context}:any = useC();
     const {updateData}:any = useUpdateC();
 	const [allPosts, setAllPosts] = useState([])
 
+	const getAllPosts = gql`
+		query getAllPosts($current_user: String!) {
+			getAllPosts(current_user: $current_user) {
+				user_name
+				user_img
+				user_id
+				post_text
+				post_img
+				post_video
+				like_number
+				who_liked
+				comments
+				comment_number
+				_id
+		  }
+		}
+		
+	`
+	const { loading, error, data} = useQuery(getAllPosts,{variables: {current_user: context.user.email}});
+	
 	useEffect(() => {
-        (async () => {
-            axios('http://10.0.2.2:8000/get-all-posts', {
-				method: 'get',
-				headers: {Authorization: 'Bearer ' + data.token},
-			})
-				.then((info:any) => setAllPosts(info.data))
-				.catch(err => alert(err))
-        })()
-    }, [])
+		setAllPosts(data.getAllPosts)
+	},[data])
+	
+	// useEffect(() => {
+    //     (async () => {
+    //         axios('http://10.0.2.2:8000/get-all-posts', {
+	// 			method: 'get',
+	// 			headers: {Authorization: 'Bearer ' + context.token},
+	// 		})
+	// 			.then((info:any) => setAllPosts(info.data))
+	// 			.catch(err => alert(err))
+    //     })()
+    // }, [])
 
 	useEffect(() => {
 		(() => {
-			data.token === '' ? navigation.navigate('Login') : null
+			context.token === '' ? navigation.navigate('Login') : null
 		})()
-	}, [data.token])
+	}, [context.token])
 
 	const changeLike = async (post:any, number:number) => {
 		if (number === 0) {
 			post.like_number -= 1
-			post.who_liked = post.who_liked.filter((userId:any) => userId !== data.user._id)
+			post.who_liked = post.who_liked.filter((userId:any) => userId !== context.user._id)
 			axios('http://10.0.2.2:8000/change-like', {
 				method: 'put',
-				headers: {Authorization: 'Bearer ' + data.token},
+				headers: {Authorization: 'Bearer ' + context.token},
 				data: post
 			})
 				.then(info => console.log('ok'))
 				.catch(err => alert(err))
 		} else {
 			post.like_number += 1
-			post.who_liked.push(data.user._id)
+			post.who_liked.push(context.user._id)
 			axios('http://10.0.2.2:8000/change-like', {
 				method: 'put',
-				headers: {Authorization: 'Bearer ' + data.token},
+				headers: {Authorization: 'Bearer ' + context.token},
 				data: post
 			})
 				.then(info => console.log('ok'))
@@ -166,7 +191,7 @@ const News = ({navigation}:any) => {
 	}
 
 	const userProfile = (userId:any) => {
-		updateData({...data, user_profile: userId})
+		updateData({...context, user_profile: userId})
 		navigation.navigate('UserProfile')
 	}
 
@@ -174,7 +199,7 @@ const News = ({navigation}:any) => {
 		<View style={{...styles.MainView, backgroundColor: darkTheme ? 'black' : 'lightgrey'}}>
 			<StatusBar style={darkTheme ? "light" : 'dark'} />
 			<ScrollView style={{height: '100%'}}>
-				{(allPosts.length !== 0)
+				{(allPosts.length !== 0 && allPosts !== undefined)
 					? allPosts.map((post:any, index:any) => (
                         <View key={index} style={{...styles.Post, backgroundColor: darkTheme ? '#141414' : 'white'}}>
                             <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => userProfile(post.user_id)}>
@@ -212,7 +237,7 @@ const News = ({navigation}:any) => {
                                 null
                             }
 							<View style={styles.PostBottom}>
-								{post.who_liked.find((item:any) => item === data.user._id)
+								{post.who_liked.find((item:any) => item === context.user._id)
 									? <View style={styles.Heart}>
 										<TouchableOpacity onPress={() => changeLike(post, 0)}>
 											<MaterialCommunityIcons
@@ -235,7 +260,7 @@ const News = ({navigation}:any) => {
 									</View>
 								}
 								<TouchableOpacity style={styles.Comment} onPress={() => {
-									updateData({...data, post})
+									updateData({...context, post})
 									navigation.navigate('Comments')
 								}}>
 									<MaterialCommunityIcons

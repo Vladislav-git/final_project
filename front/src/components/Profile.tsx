@@ -8,22 +8,23 @@ import { Video } from 'expo-av';
 // import { Camera } from 'expo-camera'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StatusBar } from 'expo-status-bar';
+import { useMutation, gql } from '@apollo/client';
 
 const Profile = ({navigation}:any) => {
-    const {darkTheme, data}:any = useC();
+    const {darkTheme, context}:any = useC();
     const {updateData}:any = useUpdateC();
     
     const [posts, setPosts]:any = useState([])
     const [err, setErr] = useState('')
     const [profileModalIsVisible, setProfileModalIsVisible] = useState(false)
     const [postModalIsVisible, setPostModalIsVisible] = useState(false)
-    const [profile, setProfile] = useState(data.user)
+    const [profile, setProfile] = useState(context.user)
     
 
     let initialPost = {
-        user_name: data.user.firstname + data.user.secondname,
-        user_img: data.user.avatar,
-        user_id: data.user._id,
+        user_name: context.user.firstname + context.user.secondname,
+        user_img: context.user.avatar,
+        user_id: context.user._id,
         post_text: '',
         post_img: '',
         post_video: '',
@@ -34,6 +35,31 @@ const Profile = ({navigation}:any) => {
     }
     const [newPost, setNewPost] = useState(initialPost)
 
+    const updateProfile = gql`
+		query updateProfile($body: User!) {
+			updateProfile(body: $body) {
+				_id
+                firstname
+                secondname
+                email
+                password
+                created_date
+                profile: {
+                    gender
+                    birth_date
+                    city
+                    phone_number
+                },
+                friends
+                images
+                videos
+                avatar
+                chats
+		    }
+		}
+		
+	`
+
     useEffect(() => {
         (async () => {
             if (Platform.OS !== 'web') {
@@ -42,9 +68,9 @@ const Profile = ({navigation}:any) => {
                     alert('Sorry, we need camera roll permissions to make this work!');
                 }
             }
-            axios(`http://10.0.2.2:8000/get-user-posts/${data.user._id}`,{
+            axios(`http://10.0.2.2:8000/get-user-posts/${context.user._id}`,{
                 method: 'get',
-                headers: {Authorization: 'Bearer ' + data.token},
+                headers: {Authorization: 'Bearer ' + context.token},
             })
                 .then(allUserPosts => {
                     setPosts(allUserPosts.data)
@@ -59,15 +85,15 @@ const Profile = ({navigation}:any) => {
 
     useEffect(() => {
 		(() => {
-			data.token === '' ? navigation.navigate('Login') : null
+			context.token === '' ? navigation.navigate('Login') : null
 		})()
-	}, [data.token])
+	}, [context.token])
 
     const saveProfileData = () => {
         axios('http://10.0.2.2:8000/update-profile',{
                 method: 'put',
                 data: profile,
-                headers: {Authorization: 'Bearer ' + data.token},
+                headers: {Authorization: 'Bearer ' + context.token},
         })
             .then((data:any) => {
                 if (data.data === 'user updated') {
@@ -88,7 +114,7 @@ const Profile = ({navigation}:any) => {
         axios('http://10.0.2.2:8000/add-post',{
                 method: 'post',
                 data: newPost,
-                headers: {Authorization: 'Bearer ' + data.token},
+                headers: {Authorization: 'Bearer ' + context.token},
         })
             .then((data:any) => {
                 if (data.data === 'post saved') {
@@ -106,7 +132,7 @@ const Profile = ({navigation}:any) => {
     }
 
     const cancelProfileChange = () => {
-        setProfile(data.user)
+        setProfile(context.user)
         setProfileModalIsVisible(false)
     }
 
@@ -150,27 +176,27 @@ const Profile = ({navigation}:any) => {
     const changeLike = async (post:any, number:number) => {
 		if (number === 0) {
 			post.like_number -= 1
-			post.who_liked = post.who_liked.filter((userId:any) => userId !== data.user._id)
+			post.who_liked = post.who_liked.filter((userId:any) => userId !== context.user._id)
 			axios('http://10.0.2.2:8000/change-like', {
 				method: 'put',
-				headers: {Authorization: 'Bearer ' + data.token},
+				headers: {Authorization: 'Bearer ' + context.token},
 				data: post
 			})
 				.then(info => console.log('ok'))
 				.catch(err => alert(err))
 		} else {
 			post.like_number += 1
-			post.who_liked.push(data.user._id)
+			post.who_liked.push(context.user._id)
 			axios('http://10.0.2.2:8000/change-like', {
 				method: 'put',
-				headers: {Authorization: 'Bearer ' + data.token},
+				headers: {Authorization: 'Bearer ' + context.token},
 				data: post
 			})
 				.then(info => console.log('ok'))
 				.catch(err => alert(err))
 		}
 	}
-    
+
     // const camera = async (ref) => {
     //     const photo = await ref.takePictureAsync()
     // }
@@ -181,14 +207,14 @@ const Profile = ({navigation}:any) => {
             <ScrollView style={{backgroundColor: darkTheme ? 'black' : 'lightgrey'}}>
                 <View style={{...styles.PreProfile, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                     <Image
-                    source={(data.user.avatar !== '')
-                        ? {uri : data.user.avatar}
+                    source={(context.user.avatar !== '')
+                        ? {uri : context.user.avatar}
                         : require('../../assets/default_user.png')
                     }
                     style={styles.MainProfileImage}
                     />
                     <Text style={{fontSize: 25, marginLeft: '5%', marginTop: '5%', color: darkTheme ? 'white' : 'black'}}>
-                        {data.user.firstname} {data.user.secondname}
+                        {context.user.firstname} {context.user.secondname}
                     </Text>
                 </View>
                 <View style={{borderBottomWidth: 1, borderBottomColor: darkTheme ? 'grey' : 'lightgrey', backgroundColor: darkTheme ? '#212121' : 'white'}}>
@@ -222,13 +248,13 @@ const Profile = ({navigation}:any) => {
                     </View>
                     <View style={{marginTop: '2%', marginBottom: '2%'}}>
                         <Text style={{...styles.ProfileText, color: darkTheme ? '#787878' : '#41454a'}}>
-                            Birth date: {data.user.profile.birth_date}
+                            Birth date: {context.user.profile.birth_date}
                         </Text>
                         <Text style={{...styles.ProfileText, color: darkTheme ? '#787878' : '#41454a'}}>
-                            City: {data.user.profile.city}
+                            City: {context.user.profile.city}
                         </Text>
                         <Text style={{...styles.ProfileText, color: darkTheme ? '#787878' : '#41454a'}}>
-                            Phone number: {data.user.profile.phone_number}
+                            Phone number: {context.user.profile.phone_number}
                         </Text>
                     </View>
                 </View>
@@ -253,14 +279,14 @@ const Profile = ({navigation}:any) => {
                         <View key={index} style={{...styles.Post, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                             <View key={index} style={{flexDirection: 'row'}}>
                                 <Image
-                                source={(data.user.avatar !== '')
-                                ? {uri : data.user.avatar}
+                                source={(context.user.avatar !== '')
+                                ? {uri : context.user.avatar}
                                 : require('../../assets/default_user.png')
                                 }
                                 style={styles.UserImage}
                                 />
                                 <Text style={{marginLeft: '3%', marginTop: '4%', color: darkTheme ? 'white' : 'black'}}>
-                                    {data.user.firstname} {data.user.secondname}
+                                    {context.user.firstname} {context.user.secondname}
                                 </Text>
                             </View>
                             
@@ -286,7 +312,7 @@ const Profile = ({navigation}:any) => {
                                 null
                             }
                             <View style={{flexDirection: 'row', height: 40,}}>
-                                {post.who_liked.find((item:any) => item === data.user._id)
+                                {post.who_liked.find((item:any) => item === context.user._id)
                                     ? 
                                         <TouchableOpacity style={{marginTop: '2.5%', height: 50,flexDirection: 'row', marginLeft: '5%'}} onPress={() => changeLike(post, 0)}>
                                             <MaterialCommunityIcons
@@ -307,7 +333,7 @@ const Profile = ({navigation}:any) => {
                                         </TouchableOpacity>
                                 }
                                 <TouchableOpacity style={{flexDirection: 'row', height: 50, marginTop: '2.5%', marginLeft: '10%'}} onPress={() => {
-                                    updateData({...data, post})
+                                    updateData({...context, post})
                                     navigation.navigate('Comments')
                                     
                                 }}>

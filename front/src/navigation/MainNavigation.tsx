@@ -15,7 +15,7 @@ const Stack = createStackNavigator();
 
 const MainNavigation = () => {
 
-    const {darkTheme, data}:any = useC();
+    const {darkTheme, context}:any = useC();
     const {toggleTheme, updateData}:any = useUpdateC();
 
     const options = {
@@ -44,9 +44,9 @@ const MainNavigation = () => {
                     }
                     
                 </TouchableOpacity>
-                {data.token
+                {context.token
                     ? <TouchableOpacity onPress={() => {
-                        updateData({...data, token: ''})
+                        updateData({...context, token: ''})
                     }}>
                         <MaterialCommunityIcons
                         style={{alignSelf: 'flex-end'}}

@@ -3,6 +3,7 @@ import MainNavigation from './src/navigation/MainNavigation'
 import { NavigationContainer } from "@react-navigation/native";
 import {Provider} from './src/context/Context'
 import firebase from 'firebase';
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBksvVdQmzeHeImOnzgLRKrLiOmqDmvUvQ",
@@ -20,15 +21,21 @@ if (!firebase.apps.length) {
   firebase.app(); // if already initialized, use that one
 }
 
+const client = new ApolloClient({
+  uri: 'http://192.168.31.181:8000/graphql',
+  cache: new InMemoryCache()
+});
 
 
 export default function App() {
   return (
-    <Provider>
-      <NavigationContainer>
-        <MainNavigation />
-      </NavigationContainer>
-    </Provider>
+    <ApolloProvider client={client}>  
+      <Provider>
+        <NavigationContainer>
+          <MainNavigation />
+        </NavigationContainer>
+      </Provider>
+    </ApolloProvider>
   );
 }
 

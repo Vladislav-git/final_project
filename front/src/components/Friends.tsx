@@ -8,7 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 
 const Friends = ({navigation}:any) => {
 
-    const {darkTheme, data}:any = useC();
+    const {darkTheme, context}:any = useC();
     const {updateData}:any = useUpdateC();
     const [friends, setFriends] = useState([])
     const [isVisible, setIsVisible] = useState(false)
@@ -21,7 +21,7 @@ const Friends = ({navigation}:any) => {
         (async () => {
             axios('http://10.0.2.2:8000/get-friends', {
                 method: 'get',
-                headers: {Authorization: 'Bearer ' + data.token},
+                headers: {Authorization: 'Bearer ' + context.token},
             })
                 .then(friendsInfoList => {
                     setFriends(friendsInfoList.data)
@@ -29,7 +29,7 @@ const Friends = ({navigation}:any) => {
                 .catch(err => alert(err))
             axios('http://10.0.2.2:8000/get-users', {
                 method: 'get',
-                headers: {Authorization: 'Bearer ' + data.token},
+                headers: {Authorization: 'Bearer ' + context.token},
             })
                 .then(usersInfoList => {
                     setUsers(usersInfoList.data)
@@ -40,27 +40,27 @@ const Friends = ({navigation}:any) => {
 
     useEffect(() => {
 		(() => {
-			data.token === '' ? navigation.navigate('Login') : null
+			context.token === '' ? navigation.navigate('Login') : null
 		})()
-	}, [data.token])
+	}, [context.token])
 
     const addFriend = async (id:any) => {
         axios('http://10.0.2.2:8000/add-friend', {
             method: 'put',
-            headers: {Authorization: 'Bearer ' + data.token},
+            headers: {Authorization: 'Bearer ' + context.token},
             data: {id: id}
         })
-            .then(resp => updateData({...data, user: resp.data}))
+            .then(resp => updateData({...context, user: resp.data}))
             .catch(err => alert(err))
     }
 
     const removeFriend = async (id:any) => {
         axios('http://10.0.2.2:8000/remove-friend', {
             method: 'put',
-            headers: {Authorization: 'Bearer ' + data.token},
+            headers: {Authorization: 'Bearer ' + context.token},
             data: {id: id}
         })
-            .then(resp => updateData({...data, user: resp.data}))
+            .then(resp => updateData({...context, user: resp.data}))
             .catch(err => alert(err))
     }
 
@@ -117,7 +117,7 @@ const Friends = ({navigation}:any) => {
                                 style={{width: '15%', height: '80%', marginTop: '1%', borderRadius: 50, marginLeft: '10%'}}
                                 />
                                 <Text style={{marginTop: '2%', marginLeft: '2%', width: '50%', color: darkTheme ? 'white' : 'black' }}>{user.firstname} {user.secondname}</Text>
-                                {data.user.friends[index] === user._id
+                                {context.user.friends[index] === user._id
                                     ? <TouchableOpacity style={styles.AddRemFriend} key={index} onPress={() => removeFriend(user._id)}>
                                         <MaterialCommunityIcons
                                         style={{alignSelf: 'flex-end'}}

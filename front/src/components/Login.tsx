@@ -15,7 +15,7 @@ const initialLoginModel = {
 
 const Login = ({navigation}:any) => {
 
-    const {darkTheme, data}:any = useC();
+    const {darkTheme, context}:any = useC();
     const {updateData}:any = useUpdateC();
 
     const recaptchaVerifier:any = useRef(null);

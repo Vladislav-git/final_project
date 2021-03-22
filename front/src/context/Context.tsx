@@ -15,7 +15,7 @@ export function useUpdateC () {
 export function Provider ({children}:any) {
 
     const [darkTheme, setDarkTheme] = useState(false);
-    const [data, setData] = useState({a:'a'})
+    const [context, setData] = useState({a:'a'})
     
 
     function toggleTheme () {
@@ -27,7 +27,7 @@ export function Provider ({children}:any) {
     }
 
     return (
-        <Context.Provider value={{darkTheme, data}}>
+        <Context.Provider value={{darkTheme, context}}>
             <UpdateContext.Provider value={{toggleTheme, updateData}}>
                 {children}
             </UpdateContext.Provider>
