@@ -23,7 +23,7 @@ if (!firebase.apps.length) {
 
 const client = new ApolloClient({
   uri: 'http://192.168.31.181:8000/graphql',
-  cache: new InMemoryCache()
+  cache: new InMemoryCache(),
 });
 
 

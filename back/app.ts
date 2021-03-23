@@ -1,6 +1,5 @@
 import express from 'express';
 import apiRouter from './src/routes/apiRoutes'
-import graphqlRouter from './src/routes/graphqlRoutes'
 import http from 'http'
 import Socket from './src/services/socketio.service'
 import {ApolloServer, gql} from 'apollo-server-express'

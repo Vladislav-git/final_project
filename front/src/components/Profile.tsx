@@ -8,7 +8,7 @@ import { Video } from 'expo-av';
 // import { Camera } from 'expo-camera'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StatusBar } from 'expo-status-bar';
-import { useMutation, gql } from '@apollo/client';
+import { useMutation, useQuery, gql } from '@apollo/client';
 
 const Profile = ({navigation}:any) => {
     const {darkTheme, context}:any = useC();
@@ -34,54 +34,66 @@ const Profile = ({navigation}:any) => {
         comment_number: 0
     }
     const [newPost, setNewPost] = useState(initialPost)
+    
 
-    const updateProfile = gql`
-		query updateProfile($body: User!) {
-			updateProfile(body: $body) {
-				_id
-                firstname
-                secondname
-                email
-                password
-                created_date
-                profile: {
-                    gender
-                    birth_date
-                    city
-                    phone_number
-                },
-                friends
-                images
-                videos
-                avatar
-                chats
-		    }
-		}
-		
+    const updateProf = gql`
+        mutation updateProfile($profile: UserInput!) {
+            updateProfile(profile: $profile) {
+                msg
+            }
+        }
 	`
 
-    useEffect(() => {
-        (async () => {
-            if (Platform.OS !== 'web') {
-                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-                if (status !== 'granted') {
-                    alert('Sorry, we need camera roll permissions to make this work!');
-                }
+    const getUserPosts = gql`
+        query getUserPosts($id: String!) {
+            getUserPosts(id: $id) {
+                user_name
+				user_img
+				user_id
+				post_text
+				post_img
+				post_video
+				like_number
+				who_liked
+				comments
+				comment_number
+				_id
             }
-            axios(`http://10.0.2.2:8000/get-user-posts/${context.user._id}`,{
-                method: 'get',
-                headers: {Authorization: 'Bearer ' + context.token},
-            })
-                .then(allUserPosts => {
-                    setPosts(allUserPosts.data)
-                })
-                .catch(error => {
-                    alert(error)
-                    navigation.navigate('Login')
-                })
-        })()
+        }
+    `
+
+    const {loading, error, data} = useQuery(getUserPosts, {variables: {id: context.user._id}})
+    const [updateProfile, args] = useMutation(updateProf)
+
+    useEffect(() => {
+        if (!loading) {
+            setPosts(data.getUserPosts)
+        }
+    },[data])
+
+    console.log(args.error)
+    // useEffect(() => {
+    //     (async () => {
+    //         if (Platform.OS !== 'web') {
+    //             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    //             if (status !== 'granted') {
+    //                 alert('Sorry, we need camera roll permissions to make this work!');
+    //             }
+    //         }
+    //         axios(`http://10.0.2.2:8000/get-user-posts/${context.user._id}`,{
+    //             method: 'get',
+    //             headers: {Authorization: 'Bearer ' + context.token},
+    //         })
+    //             .then(allUserPosts => {
+    //                 setPosts(allUserPosts.data)
+    //             })
+    //             .catch(error => {
+    //                 alert(error)
+    //                 navigation.navigate('Login')
+    //             })
+    //     })()
         
-    },[])
+    // },[])
 
     useEffect(() => {
 		(() => {
@@ -89,25 +101,33 @@ const Profile = ({navigation}:any) => {
 		})()
 	}, [context.token])
 
+    // const saveProfileData = () => {
+    //     axios('http://10.0.2.2:8000/update-profile',{
+    //             method: 'put',
+    //             data: profile,
+    //             headers: {Authorization: 'Bearer ' + context.token},
+    //     })
+    //         .then((data:any) => {
+    //             if (data.data === 'user updated') {
+    //                 updateData({token: data.token, user: profile})
+    //                 setProfileModalIsVisible(false)
+    //             } else {
+    //                 alert(data)
+    //                 navigation.navigate('Login')
+    //             }
+    //         })
+    //         .catch(error => {
+    //             alert(error)
+    //             navigation.navigate('Login')
+    //         })
+    // }
+
     const saveProfileData = () => {
-        axios('http://10.0.2.2:8000/update-profile',{
-                method: 'put',
-                data: profile,
-                headers: {Authorization: 'Bearer ' + context.token},
-        })
-            .then((data:any) => {
-                if (data.data === 'user updated') {
-                    updateData({token: data.token, user: profile})
-                    setProfileModalIsVisible(false)
-                } else {
-                    alert(data)
-                    navigation.navigate('Login')
-                }
-            })
-            .catch(error => {
-                alert(error)
-                navigation.navigate('Login')
-            })
+        updateProfile({variables: {profile: profile}})
+            .then(inf => console.log(inf,1))
+            .catch(e => console.log(e,2))
+        updateData({token: data.token, user: profile})
+        setProfileModalIsVisible(false)
     }
 
     const savePostData = () => {

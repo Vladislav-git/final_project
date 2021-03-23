@@ -141,14 +141,17 @@ const News = ({navigation}:any) => {
 				_id
 		  }
 		}
-		
 	`
 	const { loading, error, data} = useQuery(getAllPosts,{variables: {current_user: context.user.email}});
 	
 	useEffect(() => {
-		setAllPosts(data.getAllPosts)
+		if (!loading) {
+			setAllPosts(data.getAllPosts)
+		}
 	},[data])
 	
+	console.log(loading)
+
 	// useEffect(() => {
     //     (async () => {
     //         axios('http://10.0.2.2:8000/get-all-posts', {

@@ -26,6 +26,7 @@
     "expo-notifications": "~0.8.2",
     "expo-status-bar": "^1.0.3",
     "firebase": "^8.2.10",
+    "fs": "0.0.1-security",
     "googleapis": "^67.1.1",
     "graphql": "^15.5.0",
     "react": "16.13.1",

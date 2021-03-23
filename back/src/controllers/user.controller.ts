@@ -1,11 +1,9 @@
 const {usersService} = require('../services/user.service');
-const {graphqlService} = require('../services/graphqlServices')
 
 
 class UsersController {
 
 	service = usersService;
-	graphqlService = graphqlService
 
 	login = async (req:any, res:any, next:any) => {
 		res.send(await this.service.login(req.body));

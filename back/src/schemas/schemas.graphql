@@ -1,12 +1,37 @@
 type Query {
     getAllPosts(current_user: String!): [Post],
+    getUserPosts(id: String!): [Post],
+    getFriends(email: String!): [User],
+    getChats(email: String!): ChatsAndChatUsers,
+    getUsers(current_user: String!): [User],
+    getPostComments(postId: String!): [Comment],
+    getUserProfile(profileId: String!): User
 }
 
 type Mutation {
-    updateProfile(body: User!): User,
+    updateProfile(profile: UserInput!): Msg,
+    addPost(body: PostInput!): Msg,
+    addChat(body: String!, current_user: String!): MsgAndUser,
+    addFriend(user_id: String!, current_user: String!): User,
+    changeLike(post: PostInput!, current_user: String!): Msg,
+    removeFriend(user_id: String!, current_user: String!): User
 }
 
 type Post {
+    _id: ID,
+    user_name: String,
+    user_img: String,
+    user_id: ID,
+    post_text: String,
+    post_img: String,
+    post_video: String,
+    like_number: Int,
+    who_liked: [Int],
+    comments: [ID],
+    comment_number: Int
+}
+
+input PostInput {
     _id: ID,
     user_name: String,
     user_img: String,
@@ -27,15 +52,68 @@ type User {
     email: String,
     password: String,
     created_date: String,
-    profile: {
-        gender: String,
-        birth_date: String,
-        city: String,
-        phone_number: String
-    },
+    profile: Profile,
     friends: [ID],
     images: [String],
     videos: [String],
     avatar: String,
     chats: [ID]
+}
+
+type Profile {
+    gender: String,
+    birth_date: String,
+    city: String,
+    phone_number: String
+}
+
+input UserInput {
+    _id: ID
+    firstname: String,
+    secondname: String,
+    email: String,
+    password: String,
+    created_date: String,
+    profile: ProfileInput,
+    friends: [ID],
+    images: [String],
+    videos: [String],
+    avatar: String,
+    chats: [ID]
+}
+
+input ProfileInput {
+    gender: String,
+    birth_date: String,
+    city: String,
+    phone_number: String
+}
+
+type Msg {
+    msg: String
+}
+
+type Chat {
+    _id: ID,
+    chat_user_id: ID,
+    current_user_id: ID
+}
+
+type ChatsAndChatUsers {
+    chatUsersInfo: [User],
+    chats: [Chat]
+}
+
+type Comment {
+    user_id: ID,
+    post_id: ID,
+    comment_text: String,
+    comment_img: String,
+    comment_video: String,
+    created_date: String
+}
+
+type MsgAndUser {
+    msg: Msg,
+    current_user: User
 }
