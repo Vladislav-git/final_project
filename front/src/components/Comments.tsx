@@ -12,7 +12,7 @@ import { Video } from 'expo-av';
 
 const Comments = ({navigation}:any) => {
 
-    const {darkTheme, context}:any = useC();
+    const {darkTheme, context} = useC();
     const {updateData}:any = useUpdateC();
     const [allComments, setAllComments] = useState([])
     const [isVisible, setIsVisible] = useState(false)

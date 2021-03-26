@@ -11,7 +11,7 @@ const cloneDeep = require('lodash.clonedeep');
 
 const Friends = ({navigation}:any) => {
 
-    const {darkTheme, context}:any = useC();
+    const {darkTheme, context} = useC();
     const {updateData}:any = useUpdateC();
     const [friends, setFriends] = useState([])
     const [isVisible, setIsVisible] = useState(false)
@@ -119,7 +119,7 @@ const Friends = ({navigation}:any) => {
     useEffect(() => {
         if (!getF.loading) {
             const copy = cloneDeep(getF.data.getFriends)
-            const newCopy = copy.map((item:any, index:any) => {
+            const newCopy = copy.map((item:any, index:number) => {
                 delete item.__typename
                 return item
             })
@@ -150,7 +150,7 @@ const Friends = ({navigation}:any) => {
     useEffect(() => {
         if (!getU.loading) {
             const copy = cloneDeep(getU.data.getUsers)
-            const newCopy = copy.map((item:any, index:any) => {
+            const newCopy = copy.map((item:any, index:number) => {
                 delete item.__typename
                 return item
             })
@@ -164,7 +164,7 @@ const Friends = ({navigation}:any) => {
 		})()
 	}, [context.token])
 
-    const addFriendF = async (id:any) => {
+    const addFriendF = async (id:string) => {
         // axios('http://10.0.2.2:8000/add-friend', {
         //     method: 'put',
         //     headers: {Authorization: 'Bearer ' + context.token},
@@ -179,7 +179,7 @@ const Friends = ({navigation}:any) => {
             .catch(err => alert(err))
     }
 
-    const removeFriendF = async (id:any) => {
+    const removeFriendF = async (id:string) => {
         // axios('http://10.0.2.2:8000/remove-friend', {
         //     method: 'put',
         //     headers: {Authorization: 'Bearer ' + context.token},
@@ -238,7 +238,7 @@ const Friends = ({navigation}:any) => {
                     />
                     <ScrollView style={{marginTop: '3%'}}>
                     {(users.length !== 0 && users !== undefined)
-                        ? users.map((user:any, index:any) => (
+                        ? users.map((user:any, index:number) => (
                             <View key={index} style={{...styles.FriendContainer, marginLeft: 0, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                                 <Image source={(user.avatar !== '')
                                     ? {uri: user.avatar}

@@ -8,6 +8,55 @@ import {loginShema} from '../validation/validation'
 import firebase from 'firebase'
 import { StatusBar } from 'expo-status-bar';
 
+interface Profile {
+    _id: string,
+    firstname: string,
+    secondname: string,
+    email: string,
+    password: string,
+    created_date: string,
+    profile: ProfileData,
+    friends: Array<string>,
+    images: Array<string>,
+    videos: Array<string>,
+    avatar: string,
+    chats: Array<string>
+}
+
+interface User {
+    user_profile: string,
+    token: string,
+    user: Profile,
+    post: Post,
+    current_chat: [CurrentChat]
+}
+interface Post {
+	_id: string,
+	user_name: string,
+    user_img: string,
+    user_id: string,
+    post_text: string,
+    post_img: string,
+    post_video: string,
+    like_number: Number,
+    who_liked: Array<string>,
+    comments: Array<string>,
+    comment_number: Number
+}
+
+interface ProfileData {
+    gender: string,
+    birth_date: string,
+    city: string,
+    phone_number: string,
+}
+
+interface CurrentChat {
+    _id: string,
+    chat_user_id: string,
+    current_user_id: string
+}
+
 const initialLoginModel = {
     email: '',
     password: '',
@@ -15,7 +64,7 @@ const initialLoginModel = {
 
 const Login = ({navigation}:any) => {
 
-    const {darkTheme, context}:any = useC();
+    const {darkTheme, context} = useC();
     const {updateData}:any = useUpdateC();
 
     const recaptchaVerifier:any = useRef(null);
@@ -24,7 +73,7 @@ const Login = ({navigation}:any) => {
 
     const [loginModel, setLoginModel] = useState(initialLoginModel)
     const [err, setErr] = useState('')
-    const [phoneNumber, setPhoneNumber]:any = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [verificationId, setVerificationId] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
     const [isVisible, setIsVisible] = useState(false)
@@ -61,7 +110,8 @@ const Login = ({navigation}:any) => {
                     .then(resp => {
                         if (resp.data != 'no such user' && resp.data != 'wrong password') {
                             delete resp.data.user.__v
-                            updateData(resp.data)
+                            const alldata:User = resp.data 
+                            updateData(alldata)
                             return navigation.navigate('Profile')
                         } else {
                             setErr(resp.data)

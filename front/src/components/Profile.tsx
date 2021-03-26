@@ -12,7 +12,7 @@ import { useMutation, useQuery, gql } from '@apollo/client';
 
 
 const Profile = ({navigation}:any) => {
-    const {darkTheme, context}:any = useC();
+    const {darkTheme, context} = useC();
     const {updateData}:any = useUpdateC();
     
     const [posts, setPosts]:any = useState([])
@@ -23,7 +23,7 @@ const Profile = ({navigation}:any) => {
     
 
     let initialPost = {
-        user_name: context.user.firstname + context.user.secondname,
+        user_name: `${context.user.firstname} ${context.user.secondname}`,
         user_img: context.user.avatar,
         user_id: context.user._id,
         post_text: '',
@@ -232,7 +232,7 @@ const Profile = ({navigation}:any) => {
     const changeLikeC = async (post:any, number:number) => {
 		if (number === 0) {
 			post.like_number -= 1
-			post.who_liked = post.who_liked.filter((userId:any) => userId !== context.user._id)
+			post.who_liked = post.who_liked.filter((userId:string) => userId !== context.user._id)
 			// axios('http://10.0.2.2:8000/change-like', {
 			// 	method: 'put',
 			// 	headers: {Authorization: 'Bearer ' + context.token},
@@ -337,7 +337,7 @@ const Profile = ({navigation}:any) => {
                 </View>
                 {(posts.length !== 0)
                 ?
-                    posts.map((post:any, index:any) => (
+                    posts.map((post:any, index:number) => (
                         <View key={index} style={{...styles.Post, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                             <View key={index} style={{flexDirection: 'row'}}>
                                 <Image

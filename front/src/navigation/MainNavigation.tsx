@@ -15,7 +15,7 @@ const Stack = createStackNavigator();
 
 const MainNavigation = () => {
 
-    const {darkTheme, context}:any = useC();
+    const {darkTheme, context} = useC();
     const {toggleTheme, updateData}:any = useUpdateC();
 
     const options = {

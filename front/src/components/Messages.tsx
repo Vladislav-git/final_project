@@ -9,7 +9,7 @@ import { StatusBar } from 'expo-status-bar';
 
 const Messages = ({navigation}:any) => {
 
-    const {darkTheme, context}:any = useC();
+    const {darkTheme, context} = useC();
     const {updateData}:any = useUpdateC();
 
     const initialMessage = {

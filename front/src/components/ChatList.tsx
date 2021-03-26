@@ -11,7 +11,7 @@ const cloneDeep = require('lodash.clonedeep');
 
 const ChatList = ({navigation}:any) => {
     
-    const {darkTheme, context}:any = useC();
+    const {darkTheme, context} = useC();
     const {updateData}:any = useUpdateC();
 
     const [chatUsersInfo, setChatUsersInfo]:any = useState([])
@@ -122,7 +122,7 @@ const ChatList = ({navigation}:any) => {
 		})()
 	}, [context.token])
 
-    const addChat = async (email:any) => {
+    const addChat = async (email:string) => {
         axios('http://10.0.2.2:8000/add-chat',{
             method: 'post',
             headers: {Authorization: 'Bearer ' + context.token},
@@ -187,7 +187,7 @@ const ChatList = ({navigation}:any) => {
                         {(friends.length !== 0)
                             ? friends.map((friend:any, index:number) => (
                                 <View key={index}>
-                                    {friend.chats.filter((chatId:any) => context.user.chats.indexOf(chatId) >= 0).length !== 0
+                                    {friend.chats.filter((chatId:string) => context.user.chats.indexOf(chatId) >= 0).length !== 0
                                     ? null
                                     : <View style={{...styles.FriendContainer, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                                         <Image source={(friend.avatar !== '')

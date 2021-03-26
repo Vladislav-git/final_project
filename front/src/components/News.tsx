@@ -120,10 +120,24 @@ const cloneDeep = require('lodash.clonedeep');
 // 	},
 // });
 
+interface Post {
+	_id: String,
+	user_name: String,
+    user_img: String,
+    user_id: String,
+    post_text: String,
+    post_img: String,
+    post_video: String,
+    like_number: Number,
+    who_liked: Array<String>,
+    comments: Array<String>,
+    comment_number: Number
+}
+
 
 const News = ({navigation}:any) => {
 
-	const {darkTheme, context}:any = useC();
+	const {darkTheme, context} = useC();
     const {updateData}:any = useUpdateC();
 	const [allPosts, setAllPosts] = useState([])
 
@@ -159,7 +173,7 @@ const News = ({navigation}:any) => {
 	useEffect(() => {
 		if (!loading) {
 			const copy = cloneDeep(data.getAllPosts)
-			const newCopy = copy.map((item:any, index:any) => {
+			const newCopy = copy.map((item:any, index:string) => {
 				delete item.__typename
 				return item
 			})
@@ -187,7 +201,7 @@ const News = ({navigation}:any) => {
 	const changeLikeC = async (post:any, number:number) => {
 		if (number === 0) {
 			post.like_number -= 1
-			post.who_liked = post.who_liked.filter((userId:any) => userId !== context.user._id)
+			post.who_liked = post.who_liked.filter((userId:string) => userId !== context.user._id)
 			// axios('http://10.0.2.2:8000/change-like', {
 			// 	method: 'put',
 			// 	headers: {Authorization: 'Bearer ' + context.token},
@@ -214,7 +228,7 @@ const News = ({navigation}:any) => {
 		}
 	}
 
-	const userProfile = (userId:any) => {
+	const userProfile = (userId:string) => {
 		updateData({...context, user_profile: userId})
 		navigation.navigate('UserProfile')
 	}
@@ -224,7 +238,7 @@ const News = ({navigation}:any) => {
 			<StatusBar style={darkTheme ? "light" : 'dark'} />
 			<ScrollView style={{height: '100%'}}>
 				{(allPosts.length !== 0 && allPosts !== undefined)
-					? allPosts.map((post:any, index:any) => (
+					? allPosts.map((post:Post, index:number) => (
                         <View key={index} style={{...styles.Post, backgroundColor: darkTheme ? '#141414' : 'white'}}>
                             <TouchableOpacity style={{flexDirection: 'row'}} onPress={() => userProfile(post.user_id)}>
                                 <Image

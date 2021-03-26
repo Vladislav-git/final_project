@@ -11,10 +11,10 @@ const cloneDeep = require('lodash.clonedeep');
 
 const UserProfile = ({navigation}:any) => {
 
-    const {darkTheme, context}:any = useC();
+    const {darkTheme, context} = useC();
     const {updateData}:any = useUpdateC();
 
-    const [posts, setPosts]:any = useState([])
+    const [posts, setPosts] = useState([])
     
     let initialProfile = {
         firstname: '',
@@ -91,7 +91,7 @@ const UserProfile = ({navigation}:any) => {
 
         if (!getUPo.loading) {
             const copy = cloneDeep(getUPo.data.getUserPosts)
-            const newCopy = copy.map((item:any, index:any) => {
+            const newCopy = copy.map((item:any, index:number) => {
                 delete item.__typename
                 return item
             })
@@ -142,7 +142,7 @@ const UserProfile = ({navigation}:any) => {
     const changeLikeC = async (post:any, number:number) => {
 		if (number === 0) {
 			post.like_number -= 1
-			post.who_liked = post.who_liked.filter((userId:any) => userId !== context.user._id)
+			post.who_liked = post.who_liked.filter((userId:string) => userId !== context.user._id)
 			// axios('http://10.0.2.2:8000/change-like', {
 			// 	method: 'put',
 			// 	headers: {Authorization: 'Bearer ' + context.token},
@@ -228,7 +228,7 @@ const UserProfile = ({navigation}:any) => {
                 </View>
                 {(posts.length !== 0)
                 ?
-                    posts.map((post:any, index:any) => (
+                    posts.map((post:any, index:number) => (
                         <View key={index} style={{...styles.Post, backgroundColor: darkTheme ? '#212121' : 'white'}}>
                             <View key={index} style={{flexDirection: 'row'}}>
                                 <Image
@@ -265,7 +265,7 @@ const UserProfile = ({navigation}:any) => {
                                 null
                             }
                             <View style={{flexDirection: 'row'}}>
-                                {post.who_liked.find((item:any) => item === profile._id)
+                                {post.who_liked.find((item:string) => item === profile._id)
                                     ? <View style={{flexDirection: 'row', height: 40, marginTop: '3%', marginLeft: '5%'}}>
                                         <TouchableOpacity onPress={() => changeLikeC(post, 0)}>
                                             <MaterialCommunityIcons
