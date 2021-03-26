@@ -5,6 +5,9 @@ import {useC, useUpdateC} from '../context/Context'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Video } from 'expo-av';
 import { StatusBar } from 'expo-status-bar';
+import { useQuery, useMutation, gql } from '@apollo/client';
+
+const cloneDeep = require('lodash.clonedeep');
 
 const UserProfile = ({navigation}:any) => {
 
@@ -33,33 +36,101 @@ const UserProfile = ({navigation}:any) => {
     }
     const [profile, setProfile]:any = useState(initialProfile)
 
+    const getUserPosts = gql`
+        query getUserPosts($id: String!) {
+            getUserPosts(id: $id) {
+                user_name
+				user_img
+				user_id
+				post_text
+				post_img
+				post_video
+				like_number
+				who_liked
+				comments
+				comment_number
+				_id
+            }
+        }
+    `
+    const getUserProfile = gql`
+        query getUserProfile($profileId: String!) {
+            getUserProfile(profileId: $profileId) {
+                _id
+                firstname
+                secondname
+                email
+                password
+                created_date,
+                profile {
+                    gender
+                    birth_date
+                    city
+                    phone_number
+                }
+                friends
+                images
+                videos
+                avatar
+                chats
+            }
+        }
+    `
+    const changeL = gql`
+    mutation changeLike($post: PostInput!){
+        changeLike(post: $post) {
+            msg
+        }
+    }
+`
+    const getUPo = useQuery(getUserPosts, {variables: {id: context.user_profile}})
+    const getUPr = useQuery(getUserProfile, {variables: {profileId: context.user_profile}})
+    const [changeLike] = useMutation(changeL)
+
     useEffect(() => {
-        (async () => {
-            axios(`http://10.0.2.2:8000/get-user-posts/${context.user_profile}`,{
-                method: 'get',
-                headers: {Authorization: 'Bearer ' + context.token},
+
+        if (!getUPo.loading) {
+            const copy = cloneDeep(getUPo.data.getUserPosts)
+            const newCopy = copy.map((item:any, index:any) => {
+                delete item.__typename
+                return item
             })
-                .then(allUserPosts => {
-                    setPosts(allUserPosts.data)
-                })
-                .catch(error => {
-                    alert(error)
-                    navigation.navigate('Login')
-                })
-            axios(`http://10.0.2.2:8000/get-user-profile/${context.user_profile}`,{
-                method: 'get',
-                headers: {Authorization: 'Bearer ' + context.token},
-            })
-                .then(profile => {
-                    setProfile(profile.data)
-                })
-                .catch(error => {
-                    alert(error)
-                    navigation.navigate('Login')
-                })
-        })()
+            setPosts(newCopy)
+        }
+        // (async () => {
+        //     axios(`http://10.0.2.2:8000/get-user-posts/${context.user_profile}`,{
+        //         method: 'get',
+        //         headers: {Authorization: 'Bearer ' + context.token},
+        //     })
+        //         .then(allUserPosts => {
+        //             setPosts(allUserPosts.data)
+        //         })
+        //         .catch(error => {
+        //             alert(error)
+        //             navigation.navigate('Login')
+        //         })
+        //     axios(`http://10.0.2.2:8000/get-user-profile/${context.user_profile}`,{
+        //         method: 'get',
+        //         headers: {Authorization: 'Bearer ' + context.token},
+        //     })
+        //         .then(profile => {
+        //             setProfile(profile.data)
+        //         })
+        //         .catch(error => {
+        //             alert(error)
+        //             navigation.navigate('Login')
+        //         })
+        // })()
         
-    },[])
+    },[getUPo.data])
+
+    useEffect(() => {
+        if (!getUPr.loading) {
+            const copy = cloneDeep(getUPr.data.getUserProfile)
+            delete copy.__typename
+            setProfile(copy)
+        }
+    }, [getUPr.data])
 
     useEffect(() => {
 		(() => {
@@ -68,26 +139,32 @@ const UserProfile = ({navigation}:any) => {
 	}, [context.token])
 
 
-    const changeLike = async (post:any, number:number) => {
+    const changeLikeC = async (post:any, number:number) => {
 		if (number === 0) {
 			post.like_number -= 1
 			post.who_liked = post.who_liked.filter((userId:any) => userId !== context.user._id)
-			axios('http://10.0.2.2:8000/change-like', {
-				method: 'put',
-				headers: {Authorization: 'Bearer ' + context.token},
-				data: post
-			})
-				.then(info => console.log('ok'))
+			// axios('http://10.0.2.2:8000/change-like', {
+			// 	method: 'put',
+			// 	headers: {Authorization: 'Bearer ' + context.token},
+			// 	data: post
+			// })
+			// 	.then(info => console.log('ok'))
+			// 	.catch(err => alert(err))
+			changeLike({variables: {post: post}})
+				.then(({data}:any) => console.log(data.changeLike.msg))
 				.catch(err => alert(err))
 		} else {
 			post.like_number += 1
 			post.who_liked.push(context.user._id)
-			axios('http://10.0.2.2:8000/change-like', {
-				method: 'put',
-				headers: {Authorization: 'Bearer ' + context.token},
-				data: post
-			})
-				.then(info => console.log('ok'))
+			// axios('http://10.0.2.2:8000/change-like', {
+			// 	method: 'put',
+			// 	headers: {Authorization: 'Bearer ' + context.token},
+			// 	data: post
+			// })
+			// 	.then(info => console.log('ok'))
+			// 	.catch(err => alert(err))
+			changeLike({variables: {post: post}})
+				.then(({data}:any) => console.log(data.changeLike.msg))
 				.catch(err => alert(err))
 		}
 	}
@@ -190,7 +267,7 @@ const UserProfile = ({navigation}:any) => {
                             <View style={{flexDirection: 'row'}}>
                                 {post.who_liked.find((item:any) => item === profile._id)
                                     ? <View style={{flexDirection: 'row', height: 40, marginTop: '3%', marginLeft: '5%'}}>
-                                        <TouchableOpacity onPress={() => changeLike(post, 0)}>
+                                        <TouchableOpacity onPress={() => changeLikeC(post, 0)}>
                                             <MaterialCommunityIcons
                                             name='heart-outline'
                                             color={'red'}
@@ -200,7 +277,7 @@ const UserProfile = ({navigation}:any) => {
                                         <Text style={{marginTop: '3%', color: 'red'}}>{post.like_number}</Text>
                                     </View>
                                     : <View style={{flexDirection: 'row', height: 40, marginTop: '3%', marginLeft: '5%'}}>
-                                        <TouchableOpacity onPress={() => changeLike(post, 1)}>
+                                        <TouchableOpacity onPress={() => changeLikeC(post, 1)}>
                                             <MaterialCommunityIcons
                                             name='heart-outline'
                                             color={darkTheme ? '#787878' : '#41454a'}

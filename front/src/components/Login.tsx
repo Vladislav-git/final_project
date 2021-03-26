@@ -60,6 +60,7 @@ const Login = ({navigation}:any) => {
                 })
                     .then(resp => {
                         if (resp.data != 'no such user' && resp.data != 'wrong password') {
+                            delete resp.data.user.__v
                             updateData(resp.data)
                             return navigation.navigate('Profile')
                         } else {

@@ -9,7 +9,9 @@ import {useC, useUpdateC} from '../context/Context'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Camera } from 'expo-camera'
 import { StatusBar } from 'expo-status-bar';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
+
+const cloneDeep = require('lodash.clonedeep');
 
 // Notifications.setNotificationHandler({
 // 	handleNotification: async () => ({
@@ -142,15 +144,28 @@ const News = ({navigation}:any) => {
 		  }
 		}
 	`
+	const changeL = gql`
+		mutation changeLike($post: PostInput!){
+			changeLike(post: $post) {
+				msg
+			}
+		}
+	`
+
+
 	const { loading, error, data} = useQuery(getAllPosts,{variables: {current_user: context.user.email}});
+	const [changeLike] = useMutation(changeL)
 	
 	useEffect(() => {
 		if (!loading) {
-			setAllPosts(data.getAllPosts)
+			const copy = cloneDeep(data.getAllPosts)
+			const newCopy = copy.map((item:any, index:any) => {
+				delete item.__typename
+				return item
+			})
+			setAllPosts(newCopy)
 		}
 	},[data])
-	
-	console.log(loading)
 
 	// useEffect(() => {
     //     (async () => {
@@ -169,26 +184,32 @@ const News = ({navigation}:any) => {
 		})()
 	}, [context.token])
 
-	const changeLike = async (post:any, number:number) => {
+	const changeLikeC = async (post:any, number:number) => {
 		if (number === 0) {
 			post.like_number -= 1
 			post.who_liked = post.who_liked.filter((userId:any) => userId !== context.user._id)
-			axios('http://10.0.2.2:8000/change-like', {
-				method: 'put',
-				headers: {Authorization: 'Bearer ' + context.token},
-				data: post
-			})
-				.then(info => console.log('ok'))
+			// axios('http://10.0.2.2:8000/change-like', {
+			// 	method: 'put',
+			// 	headers: {Authorization: 'Bearer ' + context.token},
+			// 	data: post
+			// })
+			// 	.then(info => console.log('ok'))
+			// 	.catch(err => alert(err))
+			changeLike({variables: {post: post}})
+				.then(({data}:any) => console.log(data.changeLike.msg))
 				.catch(err => alert(err))
 		} else {
 			post.like_number += 1
 			post.who_liked.push(context.user._id)
-			axios('http://10.0.2.2:8000/change-like', {
-				method: 'put',
-				headers: {Authorization: 'Bearer ' + context.token},
-				data: post
-			})
-				.then(info => console.log('ok'))
+			// axios('http://10.0.2.2:8000/change-like', {
+			// 	method: 'put',
+			// 	headers: {Authorization: 'Bearer ' + context.token},
+			// 	data: post
+			// })
+			// 	.then(info => console.log('ok'))
+			// 	.catch(err => alert(err))
+			changeLike({variables: {post: post}})
+				.then(({data}:any) => console.log(data.changeLike.msg))
 				.catch(err => alert(err))
 		}
 	}
@@ -242,7 +263,7 @@ const News = ({navigation}:any) => {
 							<View style={styles.PostBottom}>
 								{post.who_liked.find((item:any) => item === context.user._id)
 									? <View style={styles.Heart}>
-										<TouchableOpacity onPress={() => changeLike(post, 0)}>
+										<TouchableOpacity onPress={() => changeLikeC(post, 0)}>
 											<MaterialCommunityIcons
 											name='heart-outline'
 											color={'red'}
@@ -252,7 +273,7 @@ const News = ({navigation}:any) => {
 										<Text style={{...styles.HeartNumber, color: 'red'}}>{post.like_number}</Text>
 									</View>
 									: <View style={styles.Heart}>
-										<TouchableOpacity onPress={() => changeLike(post, 1)}>
+										<TouchableOpacity onPress={() => changeLikeC(post, 1)}>
 											<MaterialCommunityIcons
 											name='heart-outline'
 											color={darkTheme ? '#787878' : '#41454a'}

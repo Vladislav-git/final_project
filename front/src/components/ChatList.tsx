@@ -4,6 +4,9 @@ import axios from 'axios';
 import {useC, useUpdateC} from '../context/Context'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { StatusBar } from 'expo-status-bar';
+import { useMutation, useQuery, gql } from '@apollo/client';
+
+const cloneDeep = require('lodash.clonedeep');
 
 
 const ChatList = ({navigation}:any) => {
@@ -16,30 +19,102 @@ const ChatList = ({navigation}:any) => {
     const [friends, setFriends] = useState([])
     const [chats, setChats] = useState([])
 
+    const getFriends = gql`
+        query getFriends($email: String!) {
+            getFriends(email: $email) {
+                _id
+                firstname
+                secondname
+                email
+                password
+                created_date,
+                profile {
+                    gender
+                    birth_date
+                    city
+                    phone_number
+                }
+                friends
+                images
+                videos
+                avatar
+                chats
+            }
+        }
+    `
+    const getChats = gql`
+        query getChats($email: String!) {
+            getChats(email: $email) {
+                chatUsersInfo {
+                    _id
+                    firstname
+                    secondname
+                    email
+                    password
+                    created_date
+                    profile {
+                        gender
+                        birth_date
+                        city
+                        phone_number
+                    }
+                    friends
+                    images
+                    videos
+                    avatar
+                    chats
+                }
+                chats {
+                    _id
+                    chat_user_id
+                    current_user_id
+                }
+            }
+        }
+    `
+    const getF = useQuery(getFriends, {variables: {email: context.user.email}})
+    const getC = useQuery(getChats, {variables: {email: context.user.email}})
+
     useEffect(() => {
-        (async () => {
-            axios('http://10.0.2.2:8000/get-chats',{
-                method: 'get',
-                headers: {Authorization: 'Bearer ' + context.token},
+        if (!getF.loading) {
+            const copy = cloneDeep(getF.data.getFriends)
+            const newCopy = copy.map((item:any, index:any) => {
+                delete item.__typename
+                return item
             })
-                .then((respchats:any) => {
-                    setChats(respchats.data.chats)
-                    setChatUsersInfo(respchats.data.chatUsersInfo)
-                })
-                .catch(err => {
-                    alert(err)
-                    // navigation.navigate('Login')
-                })
-            axios('http://10.0.2.2:8000/get-friends', {
-                method: 'get',
-                headers: {Authorization: 'Bearer ' + context.token},
-            })
-                .then(friendsInfoList => {
-                    setFriends(friendsInfoList.data)
-                })
-                .catch(err => alert(err))
-        })()
-    }, [])
+            setFriends(newCopy)
+        }
+        // (async () => {
+        //     axios('http://10.0.2.2:8000/get-chats',{
+        //         method: 'get',
+        //         headers: {Authorization: 'Bearer ' + context.token},
+        //     })
+        //         .then((respchats:any) => {
+        //             setChats(respchats.data.chats)
+        //             setChatUsersInfo(respchats.data.chatUsersInfo)
+        //         })
+        //         .catch(err => {
+        //             alert(err)
+        //             // navigation.navigate('Login')
+        //         })
+        //     axios('http://10.0.2.2:8000/get-friends', {
+        //         method: 'get',
+        //         headers: {Authorization: 'Bearer ' + context.token},
+        //     })
+        //         .then(friendsInfoList => {
+        //             setFriends(friendsInfoList.data)
+        //         })
+        //         .catch(err => alert(err))
+        // })()
+    }, [getF.data])
+
+    useEffect(() => {
+        if (!getC.loading) {
+            const copy = cloneDeep(getC.data.getChats)
+            setChats(copy.chats)
+            setChatUsersInfo(copy.chatUsersInfo)
+        }
+    }, [getC.data])
 
     useEffect(() => {
 		(() => {

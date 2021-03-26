@@ -13,51 +13,51 @@ type Mutation {
     addPost(body: PostInput!): Msg,
     addChat(body: String!, current_user: String!): MsgAndUser,
     addFriend(user_id: String!, current_user: String!): User,
-    changeLike(post: PostInput!, current_user: String!): Msg,
+    changeLike(post: PostInput!): Msg,
     removeFriend(user_id: String!, current_user: String!): User
 }
 
 type Post {
-    _id: ID,
+    _id: String,
     user_name: String,
     user_img: String,
-    user_id: ID,
+    user_id: String,
     post_text: String,
     post_img: String,
     post_video: String,
     like_number: Int,
-    who_liked: [Int],
-    comments: [ID],
+    who_liked: [String],
+    comments: [String],
     comment_number: Int
 }
 
 input PostInput {
-    _id: ID,
+    _id: String,
     user_name: String,
     user_img: String,
-    user_id: ID,
+    user_id: String,
     post_text: String,
     post_img: String,
     post_video: String,
     like_number: Int,
-    who_liked: [Int],
-    comments: [ID],
+    who_liked: [String],
+    comments: [String],
     comment_number: Int
 }
 
 type User {
-    _id: ID
+    _id: String
     firstname: String,
     secondname: String,
     email: String,
     password: String,
     created_date: String,
     profile: Profile,
-    friends: [ID],
+    friends: [String],
     images: [String],
     videos: [String],
     avatar: String,
-    chats: [ID]
+    chats: [String]
 }
 
 type Profile {
@@ -68,18 +68,18 @@ type Profile {
 }
 
 input UserInput {
-    _id: ID
+    _id: String
     firstname: String,
     secondname: String,
     email: String,
     password: String,
     created_date: String,
     profile: ProfileInput,
-    friends: [ID],
+    friends: [String],
     images: [String],
     videos: [String],
     avatar: String,
-    chats: [ID]
+    chats: [String]
 }
 
 input ProfileInput {
@@ -94,9 +94,9 @@ type Msg {
 }
 
 type Chat {
-    _id: ID,
-    chat_user_id: ID,
-    current_user_id: ID
+    _id: String,
+    chat_user_id: String,
+    current_user_id: String
 }
 
 type ChatsAndChatUsers {
@@ -105,8 +105,8 @@ type ChatsAndChatUsers {
 }
 
 type Comment {
-    user_id: ID,
-    post_id: ID,
+    user_id: String,
+    post_id: String,
     comment_text: String,
     comment_img: String,
     comment_video: String,

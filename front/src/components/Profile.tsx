@@ -10,6 +10,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { StatusBar } from 'expo-status-bar';
 import { useMutation, useQuery, gql } from '@apollo/client';
 
+
 const Profile = ({navigation}:any) => {
     const {darkTheme, context}:any = useC();
     const {updateData}:any = useUpdateC();
@@ -44,6 +45,14 @@ const Profile = ({navigation}:any) => {
         }
 	`
 
+    const addP = gql`
+        mutation addPost($body: PostInput!) {
+            addPost(body: $body) {
+                msg
+            }
+        }
+    `
+
     const getUserPosts = gql`
         query getUserPosts($id: String!) {
             getUserPosts(id: $id) {
@@ -62,8 +71,18 @@ const Profile = ({navigation}:any) => {
         }
     `
 
-    const {loading, error, data} = useQuery(getUserPosts, {variables: {id: context.user._id}})
-    const [updateProfile, args] = useMutation(updateProf)
+    const changeL = gql`
+        mutation changeLike($post: PostInput!){
+            changeLike(post: $post) {
+                msg
+            }
+        }
+    `
+
+    const {loading, data} = useQuery(getUserPosts, {variables: {id: context.user._id}})
+    const [updateProfile, {error}] = useMutation(updateProf)
+    const [addPost] = useMutation(addP)
+    const [changeLike] = useMutation(changeL)
 
     useEffect(() => {
         if (!loading) {
@@ -71,7 +90,6 @@ const Profile = ({navigation}:any) => {
         }
     },[data])
 
-    console.log(args.error)
     // useEffect(() => {
     //     (async () => {
     //         if (Platform.OS !== 'web') {
@@ -122,34 +140,52 @@ const Profile = ({navigation}:any) => {
     //         })
     // }
 
-    const saveProfileData = () => {
+    const saveProfileData = () => { 
         updateProfile({variables: {profile: profile}})
-            .then(inf => console.log(inf,1))
-            .catch(e => console.log(e,2))
-        updateData({token: data.token, user: profile})
-        setProfileModalIsVisible(false)
+            .then((inf:any) => {
+                if (inf.updateProfile.msg === 'ok') {
+                    updateData({token: context.token, user: profile})
+                    setProfileModalIsVisible(false)
+                } else {
+                    alert('err')
+                }
+            })
+            .catch(e => alert(e))
     }
 
     const savePostData = () => {
-        axios('http://10.0.2.2:8000/add-post',{
-                method: 'post',
-                data: newPost,
-                headers: {Authorization: 'Bearer ' + context.token},
-        })
-            .then((data:any) => {
-                if (data.data === 'post saved') {
+        addPost({variables: {body: newPost}})
+            .then((inf:any) => {
+                if (inf.addPost.msg === 'post saved') {
                     setNewPost(initialPost)
                     setPostModalIsVisible(false)
                 } else {
-                    alert(data.data)
+                    alert('err')
                 }
             })
-            .catch(error => {
-                setErr(error)
-                alert(err)
-                navigation.navigate('Login')
-            })
+            .catch(e => alert(e))
     }
+
+    // const savePostData = () => {
+    //     axios('http://10.0.2.2:8000/add-post',{
+    //             method: 'post',
+    //             data: newPost,
+    //             headers: {Authorization: 'Bearer ' + context.token},
+    //     })
+    //         .then((data:any) => {
+    //             if (data.data === 'post saved') {
+    //                 setNewPost(initialPost)
+    //                 setPostModalIsVisible(false)
+    //             } else {
+    //                 alert(data.data)
+    //             }
+    //         })
+    //         .catch(error => {
+    //             setErr(error)
+    //             alert(err)
+    //             navigation.navigate('Login')
+    //         })
+    // }
 
     const cancelProfileChange = () => {
         setProfile(context.user)
@@ -193,26 +229,32 @@ const Profile = ({navigation}:any) => {
     }
 
 
-    const changeLike = async (post:any, number:number) => {
+    const changeLikeC = async (post:any, number:number) => {
 		if (number === 0) {
 			post.like_number -= 1
 			post.who_liked = post.who_liked.filter((userId:any) => userId !== context.user._id)
-			axios('http://10.0.2.2:8000/change-like', {
-				method: 'put',
-				headers: {Authorization: 'Bearer ' + context.token},
-				data: post
-			})
-				.then(info => console.log('ok'))
+			// axios('http://10.0.2.2:8000/change-like', {
+			// 	method: 'put',
+			// 	headers: {Authorization: 'Bearer ' + context.token},
+			// 	data: post
+			// })
+			// 	.then(info => console.log('ok'))
+			// 	.catch(err => alert(err))
+            changeLike({variables: {post: post}})
+				.then(({data}:any) => console.log(data.changeLike.msg))
 				.catch(err => alert(err))
 		} else {
 			post.like_number += 1
 			post.who_liked.push(context.user._id)
-			axios('http://10.0.2.2:8000/change-like', {
-				method: 'put',
-				headers: {Authorization: 'Bearer ' + context.token},
-				data: post
-			})
-				.then(info => console.log('ok'))
+			// axios('http://10.0.2.2:8000/change-like', {
+			// 	method: 'put',
+			// 	headers: {Authorization: 'Bearer ' + context.token},
+			// 	data: post
+			// })
+			// 	.then(info => console.log('ok'))
+			// 	.catch(err => alert(err))
+            changeLike({variables: {post: post}})
+				.then(({data}:any) => console.log(data.changeLike.msg))
 				.catch(err => alert(err))
 		}
 	}
@@ -334,7 +376,7 @@ const Profile = ({navigation}:any) => {
                             <View style={{flexDirection: 'row', height: 40,}}>
                                 {post.who_liked.find((item:any) => item === context.user._id)
                                     ? 
-                                        <TouchableOpacity style={{marginTop: '2.5%', height: 50,flexDirection: 'row', marginLeft: '5%'}} onPress={() => changeLike(post, 0)}>
+                                        <TouchableOpacity style={{marginTop: '2.5%', height: 50,flexDirection: 'row', marginLeft: '5%'}} onPress={() => changeLikeC(post, 0)}>
                                             <MaterialCommunityIcons
                                             name='heart-outline'
                                             color={'red'}
@@ -343,7 +385,7 @@ const Profile = ({navigation}:any) => {
                                             <Text style={{color: 'red', marginTop: '5%'}}>{post.like_number}</Text>
                                         </TouchableOpacity>
                                     : 
-                                        <TouchableOpacity style={{marginTop: '2.5%', height: 50, flexDirection: 'row', marginLeft: '5%'}} onPress={() => changeLike(post, 1)}>
+                                        <TouchableOpacity style={{marginTop: '2.5%', height: 50, flexDirection: 'row', marginLeft: '5%'}} onPress={() => changeLikeC(post, 1)}>
                                             <MaterialCommunityIcons
                                             name='heart-outline'
                                             color={darkTheme ? '#787878' : '#41454a'}

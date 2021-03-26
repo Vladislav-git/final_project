@@ -58,7 +58,6 @@ const Query = {
 
     getUserProfile: async (root:any, {profileId}:any) => {
 		const profile = await usermodel.find({_id: profileId})
-		console.log(profile)
 		return profile[0]
 	}
 }
@@ -103,13 +102,12 @@ const Mutation = {
 		currentUser[0].chats.push(newChat)
 		await usermodel.updateOne({email: current_user}, currentUser[0])
 		await usermodel.updateOne({email: body.chat_user}, chatUser[0])
-		console.log(currentUser[0])
 		return {msg: 'new chat created', current_user: currentUser[0]}
 	},
 
     addFriend: async (root:any, {user_id, current_user}:any) => {
 		const currentUser:any = await usermodel.find({email: current_user})
-		const user:any = await usermodel.find({_id: user_id.id})
+		const user:any = await usermodel.find({_id: user_id})
 		currentUser[0].friends.push(user[0]._id)
 		user[0].friends.push(currentUser[0]._id)
 		await usermodel.updateOne({email: current_user}, currentUser[0])
@@ -117,14 +115,14 @@ const Mutation = {
 		return currentUser[0]
 	},
 
-    changeLike: async (root:any, {post, current_user}:any) => {
+    changeLike: async (root:any, {post}:any) => {
 		await postmodel.updateOne({_id: post._id}, post)
-		return 'ok'
+		return {msg: 'ok'}
 	},
 
     removeFriend: async (root:any, {user_id, current_user}:any) => {
 		const currentUser:any = await usermodel.find({email: current_user})
-		const user:any = await usermodel.find({_id: user_id.id})
+		const user:any = await usermodel.find({_id: user_id})
 		const indexC:any = currentUser[0].friends.findIndex((item:any) => mongoose.Types.ObjectId(item) === mongoose.Types.ObjectId(user[0]._id))
 		const indexU:any = user[0].friends.findIndex((item:any) => mongoose.Types.ObjectId(item) === mongoose.Types.ObjectId(currentUser[0]._id))
 		currentUser[0].friends.splice(indexC, 1)

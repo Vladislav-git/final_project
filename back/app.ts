@@ -5,7 +5,8 @@ import Socket from './src/services/socketio.service'
 import {ApolloServer, gql} from 'apollo-server-express'
 const fs = require('fs')
 const socketio = require('socket.io')
-const bodyParser = require('body-parser'); 
+const bodyParser = require('body-parser');
+import {Query, Mutation} from './src/resolvers/resolvers'
 
 
 const app = express();
@@ -14,7 +15,7 @@ const io = socketio(server)
 const PORT = 8000;
 
 const typeDefs = gql(fs.readFileSync('./src/schemas/schemas.graphql', {encoding: 'utf8'}))
-const resolvers = require('./src/resolvers/resolvers.ts')
+const resolvers = {Query, Mutation}
 
 const apolloServer = new ApolloServer({typeDefs, resolvers})
 apolloServer.applyMiddleware({app, path: '/graphql'})
