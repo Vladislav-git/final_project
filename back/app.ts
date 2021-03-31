@@ -10,6 +10,9 @@ import {Query, Mutation} from './src/resolvers/resolvers'
 import {logger} from './logger'
 
 
+require('dotenv').config()
+
+
 const app = express();
 const server = http.createServer(app)
 const io = socketio(server)
