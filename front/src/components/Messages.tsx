@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {Text, TextInput, View, TouchableOpacity, ScrollView, Image, StyleSheet, Dimensions, Modal, ImageBackground} from 'react-native'
 import {io} from 'socket.io-client'
-import {useC, useUpdateC} from '../context/Context'
+import {useC} from '../context/Context'
 import * as ImagePicker from 'expo-image-picker';
 import { Video } from 'expo-av';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -10,7 +10,6 @@ import { StatusBar } from 'expo-status-bar';
 const Messages = ({navigation}:any) => {
 
     const {darkTheme, context} = useC();
-    const {updateData}:any = useUpdateC();
 
     const initialMessage = {
         message_text: '',

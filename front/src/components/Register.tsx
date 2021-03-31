@@ -18,7 +18,7 @@ const initialRegistrationModel = {
 const Register = ({navigation}:any) => {
 
     const [registrationModel, setRegistrationModel] = useState(initialRegistrationModel)
-    const {darkTheme}:any = useC();
+    const {darkTheme} = useC();
     const [err, setErr] = useState('')
 
     const handleSubmit = (schema:object) => {

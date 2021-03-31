@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Text, TouchableOpacity, TextInput, View, StyleSheet, Image, Modal, Dimensions, Platform, Button, ScrollView} from 'react-native';
 // import firebase from 'firebase'
 // import Constants from 'expo-constants';
@@ -121,16 +121,16 @@ const cloneDeep = require('lodash.clonedeep');
 // });
 
 interface Post {
-	_id: String,
-	user_name: String,
-    user_img: String,
-    user_id: String,
-    post_text: String,
-    post_img: String,
-    post_video: String,
+	_id: string,
+	user_name: string,
+    user_img: string,
+    user_id: string,
+    post_text: string,
+    post_img: string,
+    post_video: string,
     like_number: Number,
-    who_liked: Array<String>,
-    comments: Array<String>,
+    who_liked: Array<string>,
+    comments: Array<string>,
     comment_number: Number
 }
 
